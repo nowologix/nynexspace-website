@@ -235,6 +235,8 @@ section {
 .nav-link {
     color: var(--hero-text-secondary);
     font-size: 0.9375rem;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
     transition: color 0.15s ease;
 }
 

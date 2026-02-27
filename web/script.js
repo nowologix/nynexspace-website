@@ -328,6 +328,17 @@ if (hamburger) {
 }
 
 // ============================================
+// LOGO CLICK - Scroll to top
+// ============================================
+const navLogoLink = document.querySelector('.nav-logo');
+if (navLogoLink) {
+    navLogoLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        smoothScrollTo(0, 800);
+    });
+}
+
+// ============================================
 // CONSOLE BRANDING
 // ============================================
 console.log('%c NYNEX SPACE - Strategic Intelligence from Orbit', 'font-size: 16px; color: #667eea; font-weight: bold; font-family: monospace;');
