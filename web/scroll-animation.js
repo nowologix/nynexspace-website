@@ -35,13 +35,13 @@ function initOrbitalAnimation() {
     if (heading) heading.style.color = '#ffffff';
     if (paragraph) paragraph.style.color = 'rgba(255, 255, 255, 0.8)';
 
-    // Get gradient orbs for parallax (all 6 orbs)
-    const orb1 = heroSection.querySelector('.orb-1');
-    const orb2 = heroSection.querySelector('.orb-2');
-    const orb3 = heroSection.querySelector('.orb-3');
-    const orb4 = heroSection.querySelector('.orb-4');
-    const orb5 = heroSection.querySelector('.orb-5');
-    const orb6 = heroSection.querySelector('.orb-6');
+    // Get gradient orbs for parallax (all 6 orbs) - now in global-orbs container
+    const orb1 = document.querySelector('.orb-1');
+    const orb2 = document.querySelector('.orb-2');
+    const orb3 = document.querySelector('.orb-3');
+    const orb4 = document.querySelector('.orb-4');
+    const orb5 = document.querySelector('.orb-5');
+    const orb6 = document.querySelector('.orb-6');
 
     const allOrbs = [orb1, orb2, orb3, orb4, orb5, orb6];
 
