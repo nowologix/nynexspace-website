@@ -22,8 +22,8 @@ function initOrbitalAnimation() {
         return;
     }
 
-    // Set initial inline background for animation
-    heroSection.style.background = '#000000';
+    // Set initial inline background for animation (transparent to show body vignette)
+    heroSection.style.background = 'transparent';
 
     // IMPORTANT: Start with text HIDDEN, fade in during scroll
     positioningContent.style.setProperty('opacity', '0', 'important');
@@ -272,7 +272,7 @@ function initOrbitalAnimation() {
             const eased = easeInOutQuad(Math.max(0, Math.min(p, 1)));
             currentRight = startRightValue + (centerRightValue - startRightValue) * eased;
             currentScale = 1 - (0.2 * eased);
-            currentBg = '#000000';
+            currentBg = 'transparent';
             globeOpacity = 1;
             textOpacity = 0;
             globeX = 0;
@@ -286,7 +286,7 @@ function initOrbitalAnimation() {
             const subPhase = scrollY < fadeInEnd ? 'fade-in' : 'slow-mo';
             currentRight = centerRightValue;
             currentScale = 0.8;
-            currentBg = '#000000';
+            currentBg = 'transparent';
             globeOpacity = 1;
             globeX = 0;
             globeY = 0;
@@ -312,7 +312,7 @@ function initOrbitalAnimation() {
             currentScale = 0.8 - (0.35 * eased);
 
             // Background stays black
-            currentBg = '#000000';
+            currentBg = 'transparent';
 
             globeOpacity = 1;
             globeY = viewportHeight * 0.02 * eased;  // Slight downward movement
@@ -357,7 +357,7 @@ function initOrbitalAnimation() {
             currentScale = 0.45;
 
             // Background stays black
-            currentBg = '#000000';
+            currentBg = 'transparent';
 
             globeOpacity = 1;
             globeY = viewportHeight * 0.02;
@@ -403,7 +403,7 @@ function initOrbitalAnimation() {
             currentScale = 0.45;
 
             // Background stays black
-            currentBg = '#000000';
+            currentBg = 'transparent';
 
             globeOpacity = 1;
             globeY = viewportHeight * 0.02;
@@ -443,7 +443,7 @@ function initOrbitalAnimation() {
             currentPhase = '6';
             currentRight = centerRightValue;
             currentScale = 0.45;
-            currentBg = '#000000';
+            currentBg = 'transparent';
             globeOpacity = 1;
             globeX = globeRightOffset;  // Keep globe on RIGHT side
             globeY = viewportHeight * 0.02;
@@ -481,9 +481,8 @@ function initOrbitalAnimation() {
             const fadeProgress = Math.min(1, Math.max(0, (scrollY - fadeOutStart) / (fadeOutEnd - fadeOutStart)));
             globeOpacity = 1 - fadeProgress;
 
-            // Also fade out the hero-visual background
-            const bgOpacity = 1 - fadeProgress;
-            currentBg = `rgba(0, 0, 0, ${bgOpacity})`;
+            // Also fade out the hero-visual background (stays transparent for vignette)
+            currentBg = 'transparent';
         }
 
         // Apply values

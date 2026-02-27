@@ -41,7 +41,7 @@
     --shadow-glow-strong: 0 0 60px rgba(14, 165, 233, 0.2);
 
     /* Dark Hero Section */
-    --hero-bg: #000000;
+    --hero-bg: transparent;
     --hero-bg-secondary: #0a0e1a;
     --hero-bg-card: #0f172a;
     --hero-text: #ffffff;
