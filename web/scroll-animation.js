@@ -531,7 +531,7 @@ function initOrbitalAnimation() {
         // Apply parallax and interpolated colors to all orbs (every frame)
         // Using translate3d for GPU acceleration
         // Adding slow upward drift for better parallax effect
-        const driftY = scrollY * 0.15; // Slow upward drift
+        const driftY = -scrollY * 0.2; // Negative = upward when scrolling down
         // orb3 needs centering offset since it's positioned at top: 50%, left: 50%
         if (orb1) {
             orb1.style.transform = `translate3d(${parallaxX * 0.6}px, ${driftY + parallaxY * 0.2}px, 0)`;
