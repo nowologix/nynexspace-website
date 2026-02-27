@@ -493,9 +493,9 @@ function initOrbitalAnimation() {
         globe.style.opacity = isMobile ? 0.3 : globeOpacity;
         heroSection.style.background = currentBg;
 
-        // Parallax gradient orbs based on phase and scroll
-        const parallaxY = scrollY * 0.3;
-        const parallaxX = scrollY * 0.1;
+        // Parallax gradient orbs based on phase and scroll - stronger effect
+        const parallaxY = scrollY * 0.5;
+        const parallaxX = scrollY * 0.2;
 
         // Check if phase changed for color transitions
         const phaseChanged = window._lastPhase !== currentPhase;
@@ -520,33 +520,34 @@ function initOrbitalAnimation() {
         const orbOpacity = 0.4;
 
         // Apply parallax and interpolated colors to all orbs (every frame)
+        // Using translate3d for GPU acceleration
         if (orb1) {
-            orb1.style.transform = `translate(${parallaxX * 0.5}px, ${parallaxY * 0.3}px)`;
+            orb1.style.transform = `translate3d(${parallaxX * 0.6}px, ${parallaxY * 0.4}px, 0)`;
             orb1.style.background = `radial-gradient(circle, ${rgbToString(currentOrbColors.orb1)} 0%, transparent 70%)`;
             orb1.style.opacity = orbOpacity;
         }
         if (orb2) {
-            orb2.style.transform = `translate(${-parallaxX * 0.3}px, ${-parallaxY * 0.5}px)`;
+            orb2.style.transform = `translate3d(${-parallaxX * 0.4}px, ${-parallaxY * 0.6}px, 0)`;
             orb2.style.background = `radial-gradient(circle, ${rgbToString(currentOrbColors.orb2)} 0%, transparent 70%)`;
             orb2.style.opacity = orbOpacity;
         }
         if (orb3) {
-            orb3.style.transform = `translate(${parallaxX * 0.2}px, ${parallaxY * 0.4}px)`;
+            orb3.style.transform = `translate3d(${parallaxX * 0.3}px, ${parallaxY * 0.5}px, 0)`;
             orb3.style.background = `radial-gradient(circle, ${rgbToString(currentOrbColors.orb3)} 0%, transparent 70%)`;
             orb3.style.opacity = orbOpacity;
         }
         if (orb4) {
-            orb4.style.transform = `translate(${-parallaxX * 0.4}px, ${parallaxY * 0.2}px)`;
+            orb4.style.transform = `translate3d(${-parallaxX * 0.5}px, ${parallaxY * 0.3}px, 0)`;
             orb4.style.background = `radial-gradient(circle, ${rgbToString(currentOrbColors.orb1)} 0%, transparent 70%)`;
             orb4.style.opacity = orbOpacity;
         }
         if (orb5) {
-            orb5.style.transform = `translate(${parallaxX * 0.3}px, ${-parallaxY * 0.3}px)`;
+            orb5.style.transform = `translate3d(${parallaxX * 0.35}px, ${-parallaxY * 0.4}px, 0)`;
             orb5.style.background = `radial-gradient(circle, ${rgbToString(currentOrbColors.orb2)} 0%, transparent 70%)`;
             orb5.style.opacity = orbOpacity;
         }
         if (orb6) {
-            orb6.style.transform = `translate(${-parallaxX * 0.2}px, ${parallaxY * 0.5}px)`;
+            orb6.style.transform = `translate3d(${-parallaxX * 0.25}px, ${parallaxY * 0.6}px, 0)`;
             orb6.style.background = `radial-gradient(circle, ${rgbToString(currentOrbColors.orb3)} 0%, transparent 70%)`;
             orb6.style.opacity = orbOpacity;
         }
