@@ -43,6 +43,15 @@ function initOrbitalAnimation() {
     const orb5 = document.querySelector('.orb-5');
     const orb6 = document.querySelector('.orb-6');
 
+    console.log('Orbs found:', {
+        orb1: !!orb1,
+        orb2: !!orb2,
+        orb3: !!orb3,
+        orb4: !!orb4,
+        orb5: !!orb5,
+        orb6: !!orb6
+    });
+
     const allOrbs = [orb1, orb2, orb3, orb4, orb5, orb6];
 
     // CRITICAL: Read the ACTUAL current position AFTER everything is loaded
@@ -521,6 +530,7 @@ function initOrbitalAnimation() {
 
         // Apply parallax and interpolated colors to all orbs (every frame)
         // Using translate3d for GPU acceleration
+        // orb3 needs centering offset since it's positioned at top: 50%, left: 50%
         if (orb1) {
             orb1.style.transform = `translate3d(${parallaxX * 0.6}px, ${parallaxY * 0.4}px, 0)`;
             orb1.style.background = `radial-gradient(circle, ${rgbToString(currentOrbColors.orb1)} 0%, transparent 70%)`;
@@ -532,7 +542,7 @@ function initOrbitalAnimation() {
             orb2.style.opacity = orbOpacity;
         }
         if (orb3) {
-            orb3.style.transform = `translate3d(${parallaxX * 0.3}px, ${parallaxY * 0.5}px, 0)`;
+            orb3.style.transform = `translate3d(calc(-50% + ${parallaxX * 0.3}px), calc(-50% + ${parallaxY * 0.5}px), 0)`;
             orb3.style.background = `radial-gradient(circle, ${rgbToString(currentOrbColors.orb3)} 0%, transparent 70%)`;
             orb3.style.opacity = orbOpacity;
         }
