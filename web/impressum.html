@@ -3,152 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Impressum - ImmoStack</title>
+    <title>Impressum - NYNEX SPACE</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="index.html" class="flex items-center gap-2">
-                    <img src="./logo/is-logo_black.png" alt="ImmoStack" width="32" height="32">
-                    <span class="text-xl font-bold text-gray-900">ImmoStack</span>
-                </a>
-                <nav class="hidden md:flex items-center gap-8">
-                    <a href="index.html#features" class="text-gray-600 hover:text-gray-900 text-sm">Features</a>
-                    <a href="index.html#methodik" class="text-gray-600 hover:text-gray-900 text-sm">Methodik</a>
-                    <a href="index.html#preise" class="text-gray-600 hover:text-gray-900 text-sm">Preise</a>
-                    <a href="impressum.html" class="text-gray-900 font-medium text-sm">Impressum</a>
-                </nav>
-                <div class="flex items-center gap-4">
-                    <a href="http://localhost:3004/login" class="text-sm text-gray-600 hover:text-gray-900">Login</a>
-                    <a href="index.html#cta" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90">
-                        Warteliste
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="/logo/nynesspacelogo_light.png" alt="NYNEX SPACE" height="28" width="auto">
+            </div>
+            <!-- Hamburger Menu Button (Mobile) -->
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link" data-i18n="nav.capabilities">Fähigkeiten</a>
+                <a href="index.html#technology" class="nav-link" data-i18n="nav.technology">Technologie</a>
+                <a href="index.html#government" class="nav-link" data-i18n="nav.government">Regierung</a>
+                <a href="index.html#contact" class="nav-link" data-i18n="nav.contact">Kontakt</a>
+                <!-- Mobile only items -->
+                <div class="nav-menu-actions">
+                    <a href="index.html#contact" class="btn-primary btn-small">
+                        <span data-i18n="nav.contactBtn">Kontakt</span>
                     </a>
+                    <div class="lang-switcher">
+                        <button class="lang-btn" data-lang="en">
+                            <img src="/flag_en.png" alt="EN">
+                        </button>
+                        <button class="lang-btn active" data-lang="de">
+                            <img src="/flag_de.png" alt="DE">
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-actions">
+                <a href="index.html" class="btn-primary btn-small">
+                    <span data-i18n="nav.contactBtn">Kontakt</span>
+                </a>
+                <div class="lang-switcher">
+                    <button class="lang-btn" data-lang="en">
+                        <img src="/flag_en.png" alt="EN">
+                    </button>
+                    <button class="lang-btn active" data-lang="de">
+                        <img src="/flag_de.png" alt="DE">
+                    </button>
                 </div>
             </div>
         </div>
-    </header>
+    </nav>
 
     <!-- Content -->
-    <div class="min-h-screen bg-gray-50 py-16 px-4">
-        <div class="max-w-3xl mx-auto">
-            <div class="mb-8">
-                <a href="index.html" class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-6">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
-                    Zurück zur Startseite
-                </a>
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">Impressum</h1>
-                <p class="text-gray-600">Rechtliche Informationen zu ImmoStack</p>
-            </div>
+    <section class="section-legal">
+        <div class="container">
+            <div class="legal-content">
+                <a href="index.html" class="back-link">← Zurück zur Startseite</a>
+                <h1>Impressum</h1>
+                <p class="legal-subtitle" data-i18n="impressum.subtitle">Rechtliche Informationen zu NYNEX SPACE</p>
 
-            <div class="bg-white rounded-lg shadow-sm p-8 md:p-12">
-                <div class="prose prose-gray max-w-none">
-                    <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">Angaben gemäß § 5 TMG</h2>
+                <div class="legal-box">
+                    <h2 id="anbieter">Angaben gemäß § 5 TMG</h2>
+                    <p><strong>Anbieter:</strong></p>
+                    <p>NYNEX space GmbH</p>
+                    <p>Robert-Bosch-Straße 20</p>
+                    <p>64293 Darmstadt</p>
+                    <p>Deutschland</p>
 
-                    <div class="space-y-4 text-gray-600">
-                        <p><strong>Betreiber:</strong> ImmoStack Platform</p>
-                        <p><strong>Projekt:</strong> ImmoStack ist ein Projekt von Immobilienexperten und Investoren mit umfassender Erfahrung im deutschen Immobilienmarkt. Die Plattform wurde entwickelt, um Investoren bei datenbasierten Entscheidungen zu unterstützen.</p>
+                    <br>
+                    <p><strong>Handelsregister:</strong></p>
+                    <p>Amtsgericht Darmstadt</p>
+                    <p>HRB 91767</p>
 
-                        <p><strong>Technisch ausführende Agentur:</strong> Albatros Group GmbH</p>
-                        <p>Goldbergweg 81<br>
-                        60599 Frankfurt am Main<br>
-                        Deutschland</p>
+                    <br>
+                    <p><strong>Geschäftsführung:</strong></p>
+                    <p>Andreas Buxbaum</p>
+                    <p>Gunter Frank</p>
 
-                        <p><strong>Production & Creative HQ:</strong><br>
-                        Hamburger Str. 88<br>
-                        63073 Offenbach am Main<br>
-                        Deutschland</p>
+                    <br>
+                    <p><strong>Kontakt:</strong></p>
+                    <p>E-Mail: briefing@nynex.space</p>
+                    <p>Webseite: https://nynex.ai</p>
 
-                        <p><strong>Kontakt:</strong><br>
-                        E-Mail: mail@albatros.agency<br>
-                        Telefon: +49 (0) 69 65008 987</p>
+                    <br>
+                    <p><strong>Umsatzsteuer-Identifikationsnummer:</strong></p>
+                    <p>Die USt-IdNr. wird auf Anfrage bereitgestellt.</p>
 
-                        <p><strong>Handelsregister:</strong><br>
-                        Amtsgericht Frankfurt am Main<br>
-                        Handelsregisternummer: HRB 124784</p>
+                    <br>
+                    <p><strong>Aufsichtsbehörde:</strong></p>
+                    <p>Gewerbeaufsichtsamt Darmstadt</p>
+                    <p>Stadt Darmstadt</p>
 
-                        <p><strong>Umsatzsteuer-Identifikationsnummer:</strong><br>
-                        USt-IdNr.: DE350099573<br>
-                        Gemäß § 27a UStG</p>
+                    <br>
+                    <p><strong>Registereintragung:</strong></p>
+                    <p>Eintragung im Handelsregister</p>
+                    <p>Registergericht: Amtsgericht Darmstadt</p>
+                    <p>Registernummer: HRB 91767</p>
 
-                        <p><strong>Geschäftsführung:</strong><br>
-                        Robin Schwarzfeld</p>
+                    <h2 id="haftung" class="mt-xl">Haftungsausschluss</h2>
+                    <p>Wir übernehmen keine Gewähr für die Aktualität, Korrektheit, Vollständigkeit oder Qualität der bereitgestellten Informationen. Haftungsansprüche gegen uns, die sich auf Schäden materieller oder ideeller Art beziehen, die durch die Nutzung oder Nichtnutzung der bereitgestellten Informationen verursacht wurden, sind grundsätzlich ausgeschlossen, sofern seitens unseres Autors kein nachweislich vorsätzliches oder grob fahrlässiges Verschulden vorliegt.</p>
 
-                        <p><strong>Inhaltlich Verantwortlicher gem. § 55 II RStV:</strong><br>
-                        Robin Schwarzfeld</p>
+                    <p>Alle Angebote sind freibleibend und unverbindlich. Der Betreiber behält es sich vor, Teile der Seiten oder das gesamte Angebot ohne gesonderte Ankündigung zu verändern, zu ergänzen, zu löschen oder die Veröffentlichung zeitweilig oder dauerhaft einzustellen.</p>
 
-                        <p><strong>Aufsichtsbehörde:</strong><br>
-                        Gewerbeaufsichtsamt Frankfurt am Main</p>
+                    <h2 id="links" class="mt-xl">Externe Links</h2>
+                    <p>Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte und die Richtigkeit der bereitgestellten Informationen ist der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.</p>
 
-                        <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">Haftungsausschluss</h2>
-
-                        <p class="mt-4">Wir übernehmen keine Gewähr für die Aktualität, Korrektheit, Vollständigkeit oder Qualität der bereitgestellten Informationen. Haftungsansprüche gegen uns, die sich auf Schäden materieller oder ideeller Art beziehen, die durch die Nutzung oder Nichtnutzung der bereitgestellten Informationen oder durch die Nutzung fehlerhafter und unvollständiger Informationen verursacht wurden, sind grundsätzlich ausgeschlossen, sofern seitens unseres Autors kein nachweislich vorsätzliches oder grob fahrlässiges Verschulden vorliegt.</p>
-
-                        <p>Alle Angebote sind freibleibend und unverbindlich. Der Betreiber behält es ausdrücklich vor, Teile der Seiten oder das gesamte Angebot ohne gesonderte Ankündigung zu verändern, zu ergänzen, zu löschen oder die Veröffentlichung zeitweilig oder dauerhaft einzustellen.</p>
-
-                        <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">Links</h2>
-
-                        <p class="mt-4">Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte und die Richtigkeit der bereitgestellten Informationen ist der jeweilige Anbieter oder Betreiber der Seiten verantwortlich. Die externen Links wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft und zum Zeitpunkt der Verlinkung keine illegalen Inhalte erkennbar waren.</p>
-
-                        <p>Sollten Sie trotzdem auf Urheber- oder Markenrechtsverletzungen auf externen Websites aufmerksam werden, bitten wir Sie, uns dies unverzüglich mitzuteilen, damit wir die entsprechenden Links entfernen können. Wir danken Ihnen für Ihre Mithilfe.</p>
-
-                        <h2 class="text-xl font-semibold text-gray-900 mt-8 mb-4">Urheberrecht</h2>
-
-                        <p class="mt-4">Die durch die Betreiber dieser Seite erstellten Inhalte und Werke unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors oder Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht kommerziellen Gebrauch gestattet.</p>
-
-                        <p>Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie dennoch auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir Sie, uns dies unverzüglich mitzuteilen.</p>
-                    </div>
+                    <h2 id="urheber" class="mt-xl">Urheberrecht</h2>
+                    <p>Die durch die Betreiber dieser Seite erstellten Inhalte und Werke unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechts bedürfen der schriftlichen Zustimmung des jeweiligen Autors oder Erstellers.</p>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="col-span-1">
-                    <div class="flex items-center gap-2 mb-4">
-                        <img src="./logo/is-logo_black.png" alt="ImmoStack" width="32" height="32">
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <img src="/logo/nynesspacelogo_light.png" alt="NYNEX SPACE" height="32" width="auto">
                     </div>
-                    <p class="text-sm text-gray-600">Immobilienentscheidungen, quantifiziert.</p>
+                    <p data-i18n="footer.tagline">Strategische Intelligenz aus dem Orbit</p>
                 </div>
-                <div>
-                    <h4 class="font-semibold text-gray-900 mb-4">Product</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="index.html#features" class="text-gray-600 hover:text-gray-900">Features</a></li>
-                        <li><a href="index.html#methodik" class="text-gray-600 hover:text-gray-900">Methodik</a></li>
-                        <li><a href="index.html#preise" class="text-gray-600 hover:text-gray-900">Preise</a></li>
+                <div class="footer-col">
+                    <h4 data-i18n="nav.capabilities">Fähigkeiten</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html#capabilities">Kritische Infrastruktur</a></li>
+                        <li><a href="index.html#vertical-spaceweather">Weltraumwetter</a></li>
+                        <li><a href="index.html#vertical-foodsecurity">Ernährungssicherheit</a></li>
                     </ul>
                 </div>
-                <div>
-                    <h4 class="font-semibold text-gray-900 mb-4">Company</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="impressum.html" class="text-gray-900">Impressum</a></li>
-                        <li><a href="datenschutz.html" class="text-gray-600 hover:text-gray-900">Datenschutz</a></li>
-                        <li><a href="agb.html" class="text-gray-600 hover:text-gray-900">AGB</a></li>
+                <div class="footer-col">
+                    <h4>Unternehmen</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html#technology">Technologie</a></li>
+                        <li><a href="index.html#government">Regierung</a></li>
                     </ul>
                 </div>
-                <div>
-                    <h4 class="font-semibold text-gray-900 mb-4">Legal</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="impressum.html" class="text-gray-600 hover:text-gray-900">Impressum</a></li>
-                        <li><a href="datenschutz.html" class="text-gray-600 hover:text-gray-900">Datenschutz</a></li>
-                        <li><a href="agb.html" class="text-gray-600 hover:text-gray-900">AGB</a></li>
+                <div class="footer-col">
+                    <h4>Rechtliches</h4>
+                    <ul class="footer-links">
+                        <li><a href="impressum.html" class="footer-active">Impressum</a></li>
+                        <li><a href="datenschutz.html">Datenschutz</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="mt-8 pt-8 border-t border-gray-200 text-center">
-                <p class="text-sm text-gray-600">© 2025 ImmoStack. Built with ❤️ in Frankfurt am Main.</p>
+            <div class="footer-bottom">
+                <span>&copy; 2025 NYNEX SPACE. Alle Rechte vorbehalten.</span>
             </div>
         </div>
     </footer>
+
+    <script src="lenis.min.js"></script>
+    <script src="translations.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Add impressum translations
+        translations.en.impressum = {
+            subtitle: 'Legal information for NYNEX SPACE'
+        };
+        translations.de.impressum = {
+            subtitle: 'Rechtliche Informationen zu NYNEX SPACE'
+        };
+    </script>
 </body>
 </html>

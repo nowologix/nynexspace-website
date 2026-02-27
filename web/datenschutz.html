@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datenschutz - NYNEX SPACE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="/logo/nynesspacelogo_light.png" alt="NYNEX SPACE" height="28" width="auto">
+            </div>
+            <!-- Hamburger Menu Button (Mobile) -->
+            <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="nav-menu">
+                <a href="index.html" class="nav-link" data-i18n="nav.capabilities">Fähigkeiten</a>
+                <a href="index.html#technology" class="nav-link" data-i18n="nav.technology">Technologie</a>
+                <a href="index.html#government" class="nav-link" data-i18n="nav.government">Regierung</a>
+                <a href="index.html#contact" class="nav-link" data-i18n="nav.contact">Kontakt</a>
+                <!-- Mobile only items -->
+                <div class="nav-menu-actions">
+                    <a href="index.html#contact" class="btn-primary btn-small">
+                        <span data-i18n="nav.contactBtn">Kontakt</span>
+                    </a>
+                    <div class="lang-switcher">
+                        <button class="lang-btn" data-lang="en">
+                            <img src="/flag_en.png" alt="EN">
+                        </button>
+                        <button class="lang-btn active" data-lang="de">
+                            <img src="/flag_de.png" alt="DE">
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-actions">
+                <a href="index.html#contact" class="btn-primary btn-small">
+                    <span data-i18n="nav.contactBtn">Kontakt</span>
+                </a>
+                <div class="lang-switcher">
+                    <button class="lang-btn" data-lang="en">
+                        <img src="/flag_en.png" alt="EN">
+                    </button>
+                    <button class="lang-btn active" data-lang="de">
+                        <img src="/flag_de.png" alt="DE">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <section class="section-legal">
+        <div class="container">
+            <div class="legal-content">
+                <a href="index.html" class="back-link">← Zurück zur Startseite</a>
+                <h1 data-i18n="privacy.title">Datenschutz</h1>
+                <p class="legal-subtitle" data-i18n="privacy.subtitle">Schutz Ihrer persönlichen Daten</p>
+
+                <div class="legal-box">
+                    <!-- Introduction -->
+                    <h2 id="einleitung" data-i18n="privacy.intro.title">Einleitung</h2>
+                    <p data-i18n="privacy.intro.text1">Wir bei NYNEX space nehmen den Schutz Ihrer persönlichen Daten sehr ernst. In dieser Datenschutzerklärung erklären wir, welche Daten wir erheben, wie wir diese verwenden und welche Rechte Sie haben.</p>
+                    <p data-i18n="privacy.intro.text2" class="mt-4">Unsere Datenschutzpraxis richtet sich nach den geltenden gesetzlichen Vorschriften, insbesondere der Datenschutz-Grundverordnung (DSGVO) desNanoNameEU.</p>
+
+                    <!-- Contact -->
+                    <h2 id="kontakt" class="mt-xl" data-i18n="privacy.contact.title">Kontakt</h2>
+                    <p><strong data-i18n="privacy.contact.company">Unternehmen:</strong> NYNEX space GmbH</p>
+                    <p>Robert-Bosch-Straße 20</p>
+                    <p>64293 Darmstadt, Deutschland</p>
+                    <p><strong>E-Mail:</strong> briefing@nynex.space</p>
+                    <p><strong>Webseite:</strong> https://nynex.ai</p>
+
+                    <!-- Data Collection -->
+                    <h2 id="erhebung" class="mt-xl" data-i18n="privacy.collection.title">Datenerhebung</h2>
+                    <p data-i18n="privacy.collection.text1">Wir erheben personenbezogene Daten nur, wenn Sie uns diese freiwillig zur Verfügung stellen. Dies kann beispielsweise geschehen, wenn Sie:</p>
+                    <ul data-i18n="privacy.collection.list">
+                        <li>Unser Kontaktformular verwenden</li>
+                        <li>Uns eine E-Mail senden</li>
+                        <li>Sich für unseren Newsletter anmelden (sofern angeboten)</li>
+                    </ul>
+
+                    <!-- Data Processing -->
+                    <h2 id="verarbeitung" class="mt-xl" data-i18n="privacy.processing.title">Datenverarbeitung</h2>
+                    <p data-i18n="privacy.processing.text1">Die von Ihnen bereitgestellten Daten werden ausschließlich zur Bearbeitung Ihrer Anfrage verwendet. Ihre Daten werden nicht an Dritte weitergegeben, es sei denn, wir sind gesetzlich dazu verpflichtet oder Sie haben ausdrücklich zugestimmt.</p>
+
+                    <!-- SSL/TLS Encryption -->
+                    <h2 id="verschluesselung" class="mt-xl" data-i18n="privacy.encryption.title">SSL/TLS-Verschlüsselung</h2>
+                    <p data-i18n="privacy.encryption.text1">Diese Website nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte eine SSL/TLS-Verschlüsselung. Sie können die verschlüsselte Verbindung an der Präsenz „https://“ in der Adresszeile Ihres Browsers erkennen.</p>
+
+                    <!-- Hosting -->
+                    <h2 id="hosting" class="mt-xl" data-i18n="privacy.hosting.title">Hosting</h2>
+                    <p data-i18n="privacy.hosting.text1">Das Hosting dieser Website erfolgt bei einem Provider in der Europäischen Union, wodurch die Einhaltung der DSGVO gewährleistet wird.</p>
+
+                    <!-- Cookies -->
+                    <h2 id="cookies" class="mt-xl" data-i18n="privacy.cookies.title">Cookies</h2>
+                    <p data-i18n="privacy.cookies.text1">Unsere Website verwendet keine Cookies zur Analyse Ihres Nutzungsverhaltens. Wir setzen technisch notwendige Cookies nur ein, wenn dies für die Bereitstellung unserer Dienste erforderlich ist.</p>
+
+                    <!-- Your Rights -->
+                    <h2 id="rechte" class="mt-xl" data-i18n="privacy.rights.title">Ihre Rechte</h2>
+                    <p data-i18n="privacy.rights.text1">Sie haben das Recht:</p>
+                    <ul data-i18n="privacy.rights.list">
+                        <li>Auskunft über Ihre gespeicherten Daten zu verlangen (Art. 15 DSGVO)</li>
+                        <li>Berichtigung falscher oder unvollständiger Daten zu verlangen (Art. 16 DSGVO)</li>
+                        <li>Löschung Ihrer Daten zu verlangen (Art. 17 DSGVO)</li>
+                        <li>Einschränkung der Verarbeitung zu verlangen (Art. 18 DSGVO)</li>
+                        <li>Datenübertragbarkeit zu verlangen (Art. 20 DSGVO)</li>
+                    </ul>
+
+                    <!-- Contact for Privacy -->
+                    <h2 id="datenschutz-contact" class="mt-xl" data-i18n="privacy.privacyContact.title">Datenschutz-Kontakt</h2>
+                    <p data-i18n="privacy.privacyContact.text1">Bei Fragen zum Datenschutz oder zur Ausübung Ihrer Rechte können Sie uns unter folgender E-Mail erreichen:</p>
+                    <p><strong>E-Mail:</strong> briefing@nynex.space</p>
+
+                    <!-- Changes -->
+                    <h2 id="aenderungen" class="mt-xl" data-i18n="privacy.changes.title">Änderungen dieser Datenschutzerklärung</h2>
+                    <p data-i18n="privacy.changes.text1">Wir behalten uns vor, diese Datenschutzerklärung anzupassen, um sie stets aktuell zu halten und gesetzlichen Änderungen anzupassen. Wir empfehlen, diese Seite regelmäßig zu überprüfen.</p>
+
+                    <!-- English Version -->
+                    <div class="mt-4xl" style="border-top: 1px solid var(--border-color); padding-top: var(--spacing-2xl);">
+                        <h1 style="font-size: 2rem; margin-bottom: var(--spacing-md);">Privacy Policy</h1>
+                        <p style="color: var(--color-text-muted); margin-bottom: var(--spacing-xl);">Protection of your personal data</p>
+
+                        <h2 class="mt-xl">Introduction</h2>
+                        <p>At NYNEX space, we take the protection of your personal data very seriously. This Privacy Policy explains what data we collect, how we use it, and your rights.</p>
+                        <p class="mt-4">Our privacy practices comply with applicable legal requirements, particularly the EU General Data Protection Regulation (GDPR).</p>
+
+                        <h2 class="mt-xl">Contact</h2>
+                        <p><strong>Company:</strong> NYNEX space GmbH</p>
+                        <p>Robert-Bosch-Straße 20</p>
+                        <p>64293 Darmstadt, Germany</p>
+                        <p><strong>Email:</strong> briefing@nynex.space</p>
+                        <p><strong>Website:</strong> https://nynex.ai</p>
+
+                        <h2 class="mt-xl">Data Collection</h2>
+                        <p>We only collect personal data when you voluntarily provide it to us. This may happen when you:</p>
+                        <ul>
+                            <li>Use our contact form</li>
+                            <li>Send us an email</li>
+                            <li>Sign up for our newsletter (if offered)</li>
+                        </ul>
+
+                        <h2 class="mt-xl">Data Processing</h2>
+                        <p>The data you provide is used exclusively to process your request. We do not share your data with third parties, except as required by law or with your explicit consent.</p>
+
+                        <h2 class="mt-xl">SSL/TLS Encryption</h2>
+                        <p>For security reasons and to protect the transmission of confidential content, this website uses SSL/TLS encryption. You can recognize the encrypted connection by the "https://" prefix in your browser's address bar.</p>
+
+                        <h2 class="mt-xl">Hosting</h2>
+                        <p>The hosting of this website is provided by a provider within the European Union, ensuring compliance with GDPR requirements.</p>
+
+                        <h2 class="mt-xl">Cookies</h2>
+                        <p>Our website does not use cookies for tracking your browsing behavior. We only use technically necessary cookies when required to provide our services.</p>
+
+                        <h2 class="mt-xl">Your Rights</h2>
+                        <p>You have the right to:</p>
+                        <ul>
+                            <li>Request information about your stored data (Art. 15 GDPR)</li>
+                            <li>Request correction of incorrect data (Art. 16 GDPR)</li>
+                            <li>Request deletion of your data (Art. 17 GDPR)</li>
+                            <li>Restrict processing of your data (Art. 18 GDPR)</li>
+                            <li>Data portability (Art. 20 GDPR)</li>
+                        </ul>
+
+                        <h2 class="mt-xl">Privacy Contact</h2>
+                        <p>For privacy questions or to exercise your rights, please contact us at:</p>
+                        <p><strong>Email:</strong> briefing@nynex.space</p>
+
+                        <h2 class="mt-xl">Changes to this Policy</h2>
+                        <p>We may update this Privacy Policy to reflect changes in our practices or legal requirements. We recommend checking this page periodically for any updates.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <img src="/logo/nynesspacelogo_light.png" alt="NYNEX SPACE" height="32" width="auto">
+                    </div>
+                    <p data-i18n="footer.tagline">Strategische Intelligenz aus dem Orbit</p>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="nav.capabilities">Fähigkeiten</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html#capabilities">Kritische Infrastruktur</a></li>
+                        <li><a href="index.html#vertical-spaceweather">Weltraumwetter</a></li>
+                        <li><a href="index.html#vertical-foodsecurity">Ernährungssicherheit</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Unternehmen</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html#technology">Technologie</a></li>
+                        <li><a href="index.html#government">Regierung</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Rechtliches</h4>
+                    <ul class="footer-links">
+                        <li><a href="impressum.html">Impressum</a></li>
+                        <li><a href="datenschutz.html" class="footer-active">Datenschutz</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2025 NYNEX SPACE. Alle Rechte vorbehalten.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="lenis.min.js"></script>
+    <script src="translations.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Add privacy translations
+        translations.en.privacy = {
+            title: 'Privacy Policy',
+            subtitle: 'Protection of your personal data',
+            intro: { title: 'Introduction' },
+            contact: { title: 'Contact', company: 'Company:' },
+            collection: { title: 'Data Collection', text1: 'We only collect personal data when you voluntarily provide it to us. This may happen when you:', list: 'Contact form, Email, Newsletter' },
+            processing: { title: 'Data Processing', text1: 'The data you provide is used exclusively to process your request. We do not share your data with third parties, except as required by law or with your explicit consent.' },
+            encryption: { title: 'SSL/TLS Encryption', text1: 'For security reasons and to protect the transmission of confidential content, this website uses SSL/TLS encryption. You can recognize the encrypted connection by the "https://" prefix in your browser's address bar.' },
+            hosting: { title: 'Hosting', text1: 'The hosting of this website is provided by a provider within the European Union, ensuring compliance with GDPR requirements.' },
+            cookies: { title: 'Cookies', text1: 'Our website does not use cookies for tracking your browsing behavior. We only use technically necessary cookies when required to provide our services.' },
+            rights: { title: 'Your Rights', text1: 'You have the right to:', list: 'Information access, Correction, Deletion, Restriction, Portability' },
+            privacyContact: { title: 'Privacy Contact', text1: 'For privacy questions or to exercise your rights, please contact us at:' },
+            changes: { title: 'Changes to this Policy', text1: 'We may update this Privacy Policy to reflect changes in our practices or legal requirements. We recommend checking this page periodically for any updates.' }
+        };
+        translations.de.privacy = {
+            title: 'Datenschutz',
+            subtitle: 'Schutz Ihrer persönlichen Daten',
+            intro: { title: 'Einleitung' },
+            contact: { title: 'Kontakt', company: 'Unternehmen:' },
+            collection: { title: 'Datenerhebung', text1: 'Wir erheben personenbezogene Daten nur, wenn Sie uns diese freiwillig zur Verfügung stellen. Dies kann beispielsweise geschehen, wenn Sie:', list: 'Kontaktformular, E-Mail, Newsletter' },
+            processing: { title: 'Datenverarbeitung', text1: 'Die von Ihnen bereitgestellten Daten werden ausschließlich zur Bearbeitung Ihrer Anfrage verwendet. Ihre Daten werden nicht an Dritte weitergegeben, es sei denn, wir sind gesetzlich dazu verpflichtet oder Sie haben ausdrücklich zugestimmt.' },
+            encryption: { title: 'SSL/TLS-Verschlüsselung', text1: 'Diese Website nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte eine SSL/TLS-Verschlüsselung. Sie können die verschlüsselte Verbindung an der Präsenz „https://“ in der Adresszeile Ihres Browsers erkennen.' },
+            hosting: { title: 'Hosting', text1: 'Das Hosting dieser Website erfolgt bei einem Provider in der Europäischen Union, wodurch die Einhaltung der DSGVO gewährleistet wird.' },
+            cookies: { title: 'Cookies', text1: 'Unsere Website verwendet keine Cookies zur Analyse Ihres Nutzungsverhaltens. Wir setzen technisch notwendige Cookies nur ein, wenn dies für die Bereitstellung unserer Dienste erforderlich ist.' },
+            rights: { title: 'Ihre Rechte', text1: 'Sie haben das Recht:', list: 'Auskunft, Berichtigung, Löschung, Einschränkung, Übertragbarkeit' },
+            privacyContact: { title: 'Datenschutz-Kontakt', text1: 'Bei Fragen zum Datenschutz oder zur Ausübung Ihrer Rechte können Sie uns unter folgender E-Mail erreichen:' },
+            changes: { title: 'Änderungen dieser Datenschutzerklärung', text1: 'Wir behalten uns vor, diese Datenschutzerklärung anzupassen, um sie stets aktuell zu halten und gesetzlichen Änderungen anzupassen. Wir empfehlen, diese Seite regelmäßig zu überprüfen.' }
+        };
+
+        // Update footer links with translations
+        document.addEventListener('DOMContentLoaded', () => {
+            const impressumLink = document.querySelector('a[href="impressum.html"]');
+            const privacyLink = document.querySelector('a[href="datenschutz.html"]');
+
+            if (impressumLink) {
+                impressumLink.addEventListener('click', (e) => {
+                    if (window.currentLang === 'en') {
+                        e.preventDefault();
+                        window.location.href = 'impressum.html#english';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

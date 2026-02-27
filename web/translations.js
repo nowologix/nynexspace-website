@@ -178,8 +178,8 @@ const translations = {
     }
 };
 
-// Current language (default: English)
-let currentLang = localStorage.getItem('lang') || 'en';
+// Current language (default: German)
+let currentLang = localStorage.getItem('lang') || 'de';
 
 // Initialize language
 function initLanguage() {
