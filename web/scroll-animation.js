@@ -35,22 +35,12 @@ function initOrbitalAnimation() {
     if (heading) heading.style.color = '#ffffff';
     if (paragraph) paragraph.style.color = 'rgba(255, 255, 255, 0.8)';
 
-    // Get gradient orbs for parallax (all 6 orbs) - now in global-orbs container
+    // Get gradient orbs for parallax (3 orbs) - now in global-orbs container
     const orb1 = document.querySelector('.orb-1');
     const orb2 = document.querySelector('.orb-2');
     const orb3 = document.querySelector('.orb-3');
-    const orb4 = document.querySelector('.orb-4');
-    const orb5 = document.querySelector('.orb-5');
-    const orb6 = document.querySelector('.orb-6');
 
-    console.log('Orbs found:', {
-        orb1: !!orb1,
-        orb2: !!orb2,
-        orb3: !!orb3,
-        orb4: !!orb4,
-        orb5: !!orb5,
-        orb6: !!orb6
-    });
+    const allOrbs = [orb1, orb2, orb3];
 
     const allOrbs = [orb1, orb2, orb3, orb4, orb5, orb6];
 
@@ -546,21 +536,6 @@ function initOrbitalAnimation() {
             orb3.style.transform = `translate3d(calc(-50% + ${parallaxX * 0.3}px), calc(-50% + ${driftY + parallaxY * 0.25}px), 0)`;
             orb3.style.background = `radial-gradient(circle, ${rgbToString(currentOrbColors.orb3)} 0%, transparent 70%)`;
             orb3.style.opacity = orbOpacity;
-        }
-        if (orb4) {
-            orb4.style.transform = `translate3d(${-parallaxX * 0.5}px, ${driftY + parallaxY * 0.15}px, 0)`;
-            orb4.style.background = `radial-gradient(circle, ${rgbToString(currentOrbColors.orb1)} 0%, transparent 70%)`;
-            orb4.style.opacity = orbOpacity;
-        }
-        if (orb5) {
-            orb5.style.transform = `translate3d(${parallaxX * 0.35}px, ${driftY - parallaxY * 0.2}px, 0)`;
-            orb5.style.background = `radial-gradient(circle, ${rgbToString(currentOrbColors.orb2)} 0%, transparent 70%)`;
-            orb5.style.opacity = orbOpacity;
-        }
-        if (orb6) {
-            orb6.style.transform = `translate3d(${-parallaxX * 0.25}px, ${driftY + parallaxY * 0.3}px, 0)`;
-            orb6.style.background = `radial-gradient(circle, ${rgbToString(currentOrbColors.orb3)} 0%, transparent 70%)`;
-            orb6.style.opacity = orbOpacity;
         }
 
         // Fade out orbs in Phase 6
