@@ -187,6 +187,99 @@ function initOrbitalAnimation() {
 
     window.addEventListener('scroll', scrollHandler, { passive: true });
 
+    // ============================================
+    // PHASE NAVIGATION
+    // ============================================
+    initPhaseNavigation();
+
+    function initPhaseNavigation() {
+        const phaseDots = document.querySelectorAll('.phase-dot');
+        if (phaseDots.length === 0) return;
+
+        // Store scroll positions for each phase
+        const phasePositions = {
+            1: 0,
+            2: 0,
+            3: 0,
+            4: 0,
+            5: 0,
+            6: 0
+        };
+
+        // Calculate phase positions (will be updated on scroll)
+        let lastCalculatedPhase = '1';
+
+        // Click handlers for phase dots
+        phaseDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const phase = parseInt(dot.getAttribute('data-phase'));
+                const targetScroll = calculatePhaseScrollPosition(phase);
+
+                // Use Lenis smooth scroll if available, otherwise fallback
+                if (window.lenis) {
+                    window.lenis.scrollTo(targetScroll, { duration: 1.5, easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
+                } else if (typeof smoothScrollTo === 'function') {
+                    smoothScrollTo(targetScroll, 1500);
+                } else {
+                    window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Calculate scroll position for a given phase
+        function calculatePhaseScrollPosition(phase) {
+            const viewportHeight = window.innerHeight;
+            const sectionTop = document.querySelector('.section-positioning')?.offsetTop || viewportHeight;
+
+            switch(phase) {
+                case 1:
+                    return 0;
+                case 2:
+                    return (sectionTop - (viewportHeight * 0.4)) * 0.4; // globeCenterEnd
+                case 3:
+                    return sectionTop + 200; // zoneEnd
+                case 4:
+                    return sectionTop + viewportHeight + 700; // phase3End
+                case 5:
+                    return sectionTop + viewportHeight * 2 + 1400; // phase4End
+                case 6:
+                    return sectionTop + viewportHeight * 3 + 2100; // phase5End
+                default:
+                    return 0;
+            }
+        }
+
+        // Update active phase dot based on scroll
+        function updatePhaseDots(currentPhase) {
+            phaseDots.forEach(dot => {
+                const dotPhase = dot.getAttribute('data-phase');
+
+                // Remove all states first
+                dot.classList.remove('active', 'visited');
+
+                // Add visited state for phases before current
+                if (parseInt(dotPhase) < parseInt(currentPhase)) {
+                    dot.classList.add('visited');
+                }
+
+                // Add active state for current phase
+                if (dotPhase === currentPhase) {
+                    dot.classList.add('active');
+                }
+            });
+
+            // Update body class for light mode styling
+            if (currentPhase >= '4') {
+                document.body.classList.add('light-mode-active');
+            } else {
+                document.body.classList.remove('light-mode-active');
+            }
+        }
+
+        // Store update function globally so scroll handler can call it
+        window.updatePhaseNavDots = updatePhaseDots;
+    }
+
     function updateAnimation() {
         // Use Lenis scroll position if available, otherwise fall back to window.scrollY
         const scrollY = window.lenis ? window.lenis.scroll : window.scrollY;
@@ -497,6 +590,10 @@ function initOrbitalAnimation() {
         const phaseChanged = window._lastPhase !== currentPhase;
         if (phaseChanged) {
             window._lastPhase = currentPhase;
+            // Update phase navigation dots
+            if (window.updatePhaseNavDots) {
+                window.updatePhaseNavDots(currentPhase);
+            }
         }
 
         // Set target colors based on phase
