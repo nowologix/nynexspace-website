@@ -626,7 +626,7 @@ section {
     width: 500px;
     height: 500px;
     background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);
-    top: 10%;
+    top: 30%;
     right: 10%;
     animation-delay: 0.2s;
 }
@@ -635,7 +635,7 @@ section {
     width: 400px;
     height: 400px;
     background: radial-gradient(circle, var(--color-secondary) 0%, transparent 70%);
-    bottom: 20%;
+    bottom: 10%;
     left: 5%;
     animation-delay: 0.5s;
 }
@@ -644,7 +644,7 @@ section {
     width: 350px;
     height: 350px;
     background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
-    top: 50%;
+    top: 70%;
     left: 50%;
     animation-delay: 0.8s;
 }
