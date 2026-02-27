@@ -42,8 +42,6 @@ function initOrbitalAnimation() {
 
     const allOrbs = [orb1, orb2, orb3];
 
-    const allOrbs = [orb1, orb2, orb3, orb4, orb5, orb6];
-
     // CRITICAL: Read the ACTUAL current position AFTER everything is loaded
     const startRight = parseInt(window.getComputedStyle(heroVisual).right);
     console.log('Starting position:', startRight);
