@@ -606,10 +606,22 @@ section {
     position: fixed;
     border-radius: 50%;
     filter: blur(80px);
-    opacity: 0.4;
+    opacity: 0;
     z-index: 2;
     pointer-events: none;
     will-change: transform, opacity;
+    animation: fadeInOrb 2s ease-out forwards;
+}
+
+@keyframes fadeInOrb {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 0.4;
+        transform: scale(1);
+    }
 }
 
 .orb-1 {
@@ -618,6 +630,7 @@ section {
     background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);
     top: 10%;
     right: 10%;
+    animation-delay: 0.2s;
 }
 
 .orb-2 {
@@ -626,6 +639,7 @@ section {
     background: radial-gradient(circle, var(--color-secondary) 0%, transparent 70%);
     bottom: 20%;
     left: 5%;
+    animation-delay: 0.5s;
 }
 
 .orb-3 {
@@ -634,6 +648,7 @@ section {
     background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
     top: 50%;
     left: 50%;
+    animation-delay: 0.8s;
 }
 
 /* Additional orbs for scroll phases */
@@ -643,6 +658,7 @@ section {
     background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);
     bottom: 15%;
     right: 5%;
+    animation-delay: 0.3s;
 }
 
 .orb-5 {
@@ -651,6 +667,7 @@ section {
     background: radial-gradient(circle, var(--color-secondary) 0%, transparent 70%);
     top: 25%;
     left: 15%;
+    animation-delay: 0.6s;
 }
 
 .orb-6 {
@@ -659,6 +676,7 @@ section {
     background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
     bottom: 30%;
     left: 40%;
+    animation-delay: 0.9s;
 }
 
 /* Global Orbs Container - spans entire page for parallax */
