@@ -84,24 +84,33 @@
 
     <!-- Phase Navigation -->
     <nav class="phase-nav" aria-label="Phase navigation">
-        <div class="phase-nav-line"></div>
         <button class="phase-dot" data-phase="1" aria-label="Phase 1: Hero">
             <span class="phase-tooltip">Hero</span>
+            <span class="dot-indicator"></span>
         </button>
         <button class="phase-dot" data-phase="2" aria-label="Phase 2: Mission">
             <span class="phase-tooltip">Mission</span>
+            <span class="dot-indicator"></span>
         </button>
         <button class="phase-dot" data-phase="3" aria-label="Phase 3: Infrastructure">
             <span class="phase-tooltip">Infrastructure</span>
+            <span class="dot-indicator"></span>
         </button>
-        <button class="phase-dot" data-phase="4" aria-label="Phase 4: Space Weather">
-            <span class="phase-tooltip">Space Weather</span>
+        <button class="phase-dot" data-phase="4" aria-label="Phase 4: Weather">
+            <span class="phase-tooltip">Weather</span>
+            <span class="dot-indicator"></span>
         </button>
-        <button class="phase-dot" data-phase="5" aria-label="Phase 5: Food Security">
-            <span class="phase-tooltip">Food Security</span>
+        <button class="phase-dot" data-phase="5" aria-label="Phase 5: Geo-Strategy">
+            <span class="phase-tooltip">Geo-Strategy</span>
+            <span class="dot-indicator"></span>
         </button>
-        <button class="phase-dot" data-phase="6" aria-label="Phase 6: Contact">
-            <span class="phase-tooltip">Contact</span>
+        <button class="phase-dot" data-phase="6" aria-label="Phase 6: Architecture">
+            <span class="phase-tooltip">Architecture</span>
+            <span class="dot-indicator"></span>
+        </button>
+        <button class="phase-dot" data-phase="7" aria-label="Phase 7: Institutional">
+            <span class="phase-tooltip">Institutional</span>
+            <span class="dot-indicator"></span>
         </button>
     </nav>
 
@@ -162,6 +171,7 @@
     <section class="section-positioning">
         <div class="container">
             <div class="positioning-content">
+                <span id="anchor-mission" class="scroll-anchor"></span>
                 <span class="section-label" data-i18n="positioning.sectionLabel">Sovereign Mission</span>
                 <h2 data-i18n="positioning.title">Predictive Orbital Intelligence for Sovereign Resilience</h2>
                 <p class="positioning-text" data-i18n="positioning.desc">
@@ -197,6 +207,7 @@
 
             <!-- Vertical 1: Critical Infrastructure -->
             <div class="vertical-section" id="vertical-infrastructure">
+                <span id="anchor-capabilities-01" class="scroll-anchor"></span>
                 <div class="vertical-grid">
                     <div class="vertical-content">
                         <span class="vertical-label">01</span>
@@ -246,6 +257,7 @@
 
             <!-- Vertical 2: Space Weather -->
             <div class="vertical-section vertical-alt" id="vertical-spaceweather">
+                <span id="anchor-capabilities-02" class="scroll-anchor"></span>
                 <div class="vertical-grid">
                     <div class="vertical-visual">
                         <img src="/images/spaceweather.jpg"
@@ -294,6 +306,7 @@
 
             <!-- Vertical 3: Food Security -->
             <div class="vertical-section" id="vertical-foodsecurity">
+                <span id="anchor-capabilities-03" class="scroll-anchor"></span>
                 <div class="vertical-grid">
                     <div class="vertical-content">
                         <span class="vertical-label">03</span>
@@ -344,6 +357,7 @@
     <section class="section-technology" id="technology">
         <div class="container">
             <div class="section-header">
+                <span id="anchor-architecture" class="scroll-anchor"></span>
                 <span class="overline">Architecture</span>
                 <h2 data-i18n="tech.title">Multi-Source Technology</h2>
                 <p class="section-subtitle">End-to-end satellite AI pipeline from orbital data ingestion to predictive intelligence</p>
@@ -395,11 +409,17 @@
         </div>
     </section>
 
+    <!-- Observatory Transition Element -->
+    <div class="observatory-transition">
+        <img src="/obervatory.png" alt="" class="observatory-img">
+    </div>
+
     <!-- Government Section -->
     <section class="section-government" id="government">
         <div class="container">
             <div class="government-grid">
                 <div class="government-content">
+                    <span id="anchor-institutional" class="scroll-anchor"></span>
                     <span class="overline">Institutional</span>
                     <h2 data-i18n="gov.title">Built for Government Deployment</h2>
                     <p class="government-description">
@@ -561,6 +581,9 @@
 
     <!-- Footer -->
     <footer class="footer">
+        <div class="footer-bg-logo">
+            <img src="/logo/nynesspacelogo_light.png" alt="NYNEX SPACE">
+        </div>
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">

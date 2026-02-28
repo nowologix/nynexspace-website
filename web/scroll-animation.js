@@ -203,7 +203,8 @@ function initOrbitalAnimation() {
             3: 0,
             4: 0,
             5: 0,
-            6: 0
+            6: 0,
+            7: 0
         };
 
         // Calculate phase positions (will be updated on scroll)
@@ -211,9 +212,28 @@ function initOrbitalAnimation() {
 
         // Click handlers for phase dots
         phaseDots.forEach(dot => {
-            dot.addEventListener('click', () => {
+            dot.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 const phase = parseInt(dot.getAttribute('data-phase'));
+
+                // Recalculate position on click to ensure accuracy
                 const targetScroll = calculatePhaseScrollPosition(phase);
+
+                console.log('Phase dot clicked:', phase, 'Target scroll:', targetScroll, 'Current scroll:', window.lenis ? window.lenis.scroll : window.scrollY);
+
+                // Validate position before scrolling
+                if (targetScroll <= 0 && phase > 1) {
+                    console.warn('Invalid scroll position, recalculating...');
+                    // Force a small delay to let layout settle
+                    setTimeout(() => {
+                        const recalculated = calculatePhaseScrollPosition(phase);
+                        if (window.lenis) {
+                            window.lenis.scrollTo(recalculated, { duration: 1.5, easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2 });
+                        }
+                    }, 100);
+                    return;
+                }
 
                 // Use Lenis smooth scroll if available, otherwise fallback
                 if (window.lenis) {
@@ -228,56 +248,233 @@ function initOrbitalAnimation() {
 
         // Calculate scroll position for a given phase
         function calculatePhaseScrollPosition(phase) {
-            const viewportHeight = window.innerHeight;
-            const sectionTop = document.querySelector('.section-positioning')?.offsetTop || viewportHeight;
+            // Use anchor positions - query fresh each time to handle dynamic content
+            if (phase === 1) return 0;
+            const anchorSelectors = {
+                2: '#anchor-mission',
+                3: '#anchor-capabilities-01',
+                4: '#anchor-capabilities-02',
+                5: '#anchor-capabilities-03',
+                6: '#anchor-architecture',
+                7: '#anchor-institutional'
+            };
+            const anchor = document.querySelector(anchorSelectors[phase]);
 
-            switch(phase) {
-                case 1:
-                    return 0;
-                case 2:
-                    return (sectionTop - (viewportHeight * 0.4)) * 0.4; // globeCenterEnd
-                case 3:
-                    return sectionTop + 200; // zoneEnd
-                case 4:
-                    return sectionTop + viewportHeight + 700; // phase3End
-                case 5:
-                    return sectionTop + viewportHeight * 2 + 1400; // phase4End
-                case 6:
-                    return sectionTop + viewportHeight * 3 + 2100; // phase5End
-                default:
-                    return 0;
+            // Debug: log to console
+            if (!anchor) {
+                console.warn('Anchor not found for phase:', phase, anchorSelectors[phase]);
+                return 0;
             }
+
+            // Get absolute position using getBoundingClientRect
+            const rect = anchor.getBoundingClientRect();
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const anchorPosition = rect.top + scrollTop;
+
+            // Offset to center content: subtract viewport height percentage
+            // This positions the headline nicely in view, not at the very top
+            const viewportHeight = window.innerHeight;
+            const centerOffset = viewportHeight * 0.20; // 20% of viewport for centering
+
+            return anchorPosition - centerOffset;
         }
 
         // Update active phase dot based on scroll
-        function updatePhaseDots(currentPhase) {
-            phaseDots.forEach(dot => {
-                const dotPhase = dot.getAttribute('data-phase');
+        // Use Intersection Observer for reliable detection
+        const setupIntersectionObserver = () => {
+            const anchors = [
+                { id: 2, selector: '#anchor-mission' },
+                { id: 3, selector: '#anchor-capabilities-01' },
+                { id: 4, selector: '#anchor-capabilities-02' },
+                { id: 5, selector: '#anchor-capabilities-03' },
+                { id: 6, selector: '#anchor-architecture' },
+                { id: 7, selector: '#anchor-institutional' }
+            ];
 
-                // Remove all states first
+            // Track the LAST phase that was visible (sticky behavior)
+            let lastVisiblePhase = 1;
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const phaseId = parseInt(entry.target.dataset.phase);
+
+                    // When entering viewport, update lastVisiblePhase
+                    if (entry.isIntersecting && entry.boundingClientRect.top >= 0) {
+                        if (phaseId > lastVisiblePhase) {
+                            lastVisiblePhase = phaseId;
+                            console.log('Phase', phaseId, 'entered, lastVisiblePhase now:', lastVisiblePhase);
+                        }
+                    }
+                });
+
+                console.log('Updating to phase:', lastVisiblePhase);
+                updateDotsFromPhase(lastVisiblePhase);
+            }, {
+                root: null,
+                rootMargin: '-40% 0px -50% 0px', // Trigger near top-middle of viewport
+                threshold: 0
+            });
+
+            // Observe all anchors
+            anchors.forEach(anchor => {
+                const el = document.querySelector(anchor.selector);
+                if (el) {
+                    el.dataset.phase = anchor.id;
+                    observer.observe(el);
+                }
+            });
+
+            return observer;
+        };
+
+        const phaseObserver = setupIntersectionObserver();
+
+        function updateDotsFromPhase(currentPhase) {
+            phaseDots.forEach(dot => {
+                const dotPhase = parseInt(dot.getAttribute('data-phase'));
                 dot.classList.remove('active', 'visited');
 
-                // Add visited state for phases before current
-                if (parseInt(dotPhase) < parseInt(currentPhase)) {
+                if (dotPhase < currentPhase) {
                     dot.classList.add('visited');
                 }
-
-                // Add active state for current phase
                 if (dotPhase === currentPhase) {
                     dot.classList.add('active');
                 }
             });
 
-            // Update body class for light mode styling
-            if (currentPhase >= '4') {
+            // Light mode for government section
+            const scrollY = window.lenis ? window.lenis.scroll : window.scrollY;
+            const governmentSection = document.querySelector('#government');
+            if (governmentSection && scrollY > governmentSection.offsetTop - 100) {
                 document.body.classList.add('light-mode-active');
             } else {
                 document.body.classList.remove('light-mode-active');
             }
         }
 
+        // Fallback: update on scroll for edge cases
+        const fallbackUpdate = () => {
+            const scrollY = window.lenis ? window.lenis.scroll : window.scrollY;
+            const maxScroll = document.body.scrollHeight - window.innerHeight;
+
+            // If at bottom, always show last phase
+            if (maxScroll - scrollY < 100) {
+                updateDotsFromPhase(7);
+            }
+        };
+
+        // Throttled fallback
+        let fallbackTimeout;
+        window.addEventListener('scroll', () => {
+            clearTimeout(fallbackTimeout);
+            fallbackTimeout = setTimeout(fallbackUpdate, 100);
+        }, { passive: true });
+
         // Store update function globally so scroll handler can call it
-        window.updatePhaseNavDots = updatePhaseDots;
+        window.updatePhaseNavDots = updateDotsFromPhase;
+
+        // ============================================
+        // SNAP TO PHASE (Non-Touch Devices Only)
+        // ============================================
+        let isScrolling = false;
+        let scrollTimeout = null;
+        const snapCooldown = 1000; // ms between snaps
+
+        // Check if device supports touch
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+        if (!isTouchDevice && window.lenis) {
+            // Phase scroll anchors - query fresh each time
+            const anchorSelectors = {
+                1: null,  // Hero - scroll to top
+                2: '#anchor-mission',
+                3: '#anchor-capabilities-01',
+                4: '#anchor-capabilities-02',
+                5: '#anchor-capabilities-03',
+                6: '#anchor-architecture',
+                7: '#anchor-institutional'
+            };
+
+            // Get scroll position for a phase
+            function getPhaseScrollPosition(phaseNum) {
+                if (phaseNum === 1) return 0;
+                const anchor = document.querySelector(anchorSelectors[phaseNum]);
+                if (anchor) {
+                    // Get absolute position using getBoundingClientRect
+                    const rect = anchor.getBoundingClientRect();
+                    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+                    const anchorPosition = rect.top + scrollTop;
+
+                    // Offset to center content in viewport
+                    const viewportHeight = window.innerHeight;
+                    const centerOffset = viewportHeight * 0.20;
+
+                    return anchorPosition - centerOffset;
+                }
+                console.warn('Anchor not found for phase:', phaseNum, anchorSelectors[phaseNum]);
+                return 0;
+            }
+
+            // Wheel event handler for snap scrolling
+            let wheelTimeout = null;
+            let lastWheelTime = 0;
+            const wheelThreshold = 50; // Minimum delta to trigger snap
+
+            window.addEventListener('wheel', (e) => {
+                const now = Date.now();
+
+                // Ignore if in cooldown period
+                if (isScrolling || now - lastWheelTime < snapCooldown) return;
+
+                // Clear any pending timeout
+                if (wheelTimeout) clearTimeout(wheelTimeout);
+
+                // Set a short timeout to detect if this is a continuous scroll
+                wheelTimeout = setTimeout(() => {
+                    const currentScroll = window.lenis.scroll;
+                    const deltaY = Math.abs(e.deltaY);
+
+                    // Only snap if the scroll was intentional (above threshold)
+                    if (deltaY > wheelThreshold) {
+                        // Find current and target phase
+                        let currentPhase = 1;
+                        for (let i = 7; i >= 1; i--) {
+                            if (currentScroll >= getPhaseScrollPosition(i) - 100) {
+                                currentPhase = i;
+                                break;
+                            }
+                        }
+
+                        let targetPhase = currentPhase;
+
+                        // Determine direction and target phase
+                        if (e.deltaY > 0) {
+                            // Scrolling down - go to next phase
+                            targetPhase = Math.min(currentPhase + 1, 7);
+                        } else {
+                            // Scrolling up - go to previous phase
+                            targetPhase = Math.max(currentPhase - 1, 1);
+                        }
+
+                        // Only snap if we're changing phases
+                        if (targetPhase !== currentPhase) {
+                            isScrolling = true;
+                            window.lenis.scrollTo(getPhaseScrollPosition(targetPhase), {
+                                duration: 1.2,
+                                easing: (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+                                onComplete: () => {
+                                    setTimeout(() => {
+                                        isScrolling = false;
+                                    }, snapCooldown);
+                                }
+                            });
+                        }
+                    }
+                }, 100);
+
+                lastWheelTime = now;
+            }, { passive: true });
+        }
     }
 
     function updateAnimation() {

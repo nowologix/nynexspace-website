@@ -489,120 +489,155 @@ section {
 }
 
 /* ============================================
-   PHASE NAVIGATION
+   PHASE NAVIGATION (21x.eu style)
    ============================================ */
 .phase-nav {
     position: fixed;
-    right: 24px;
+    right: 1rem;
     top: 50%;
     transform: translateY(-50%);
     z-index: 100;
+    padding: 0.75rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 24px;
+    justify-content: center;
+    align-items: flex-end;
+    background: transparent;
+    border-radius: 8px;
+    transition: background 0.25s ease-in-out, box-shadow 0.35s ease-in-out;
     pointer-events: none;
 }
 
+.phase-nav:hover {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    box-shadow: 0 0 60px rgba(102, 126, 234, 0.3);
+}
+
 .phase-nav-line {
-    position: absolute;
-    width: 2px;
-    height: 100%;
-    background: linear-gradient(
-        to bottom,
-        rgba(102, 126, 234, 0.3) 0%,
-        rgba(118, 75, 162, 0.3) 100%
-    );
-    border-radius: 2px;
+    display: none;
 }
 
 .phase-dot {
     position: relative;
-    width: 12px;
-    height: 12px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    pointer-events: auto;
+    padding: 0.5rem 0;
+    transition: all 0.3s ease;
+    background: none;
+    border: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.phase-dot .dot-indicator {
+    width: 1rem;
+    height: 1rem;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.2);
     border: 2px solid rgba(102, 126, 234, 0.5);
-    cursor: pointer;
-    pointer-events: auto;
+    flex-shrink: 0;
     transition: all 0.3s ease;
-    z-index: 1;
 }
 
-.phase-dot:hover {
-    transform: scale(1.3);
-    background: rgba(102, 126, 234, 0.5);
+.phase-dot:hover .dot-indicator {
     border-color: rgba(102, 126, 234, 0.8);
+    background: rgba(102, 126, 234, 0.5);
 }
 
-.phase-dot.active {
-    width: 16px;
-    height: 16px;
+.phase-dot.active .dot-indicator {
     background: var(--color-primary);
     border-color: var(--color-primary);
     box-shadow: 0 0 12px rgba(102, 126, 234, 0.6);
 }
 
-.phase-dot.visited {
+.phase-dot.visited .dot-indicator {
     background: rgba(102, 126, 234, 0.3);
     border-color: rgba(102, 126, 234, 0.5);
 }
 
 .phase-tooltip {
-    position: absolute;
-    right: 100%;
-    top: 50%;
-    transform: translateY(-50%) translateX(-8px);
-    padding: 4px 10px;
-    background: rgba(0, 0, 0, 0.8);
-    color: #fff;
+    line-height: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
     font-size: 0.75rem;
-    font-weight: 500;
-    border-radius: 4px;
     white-space: nowrap;
+    overflow: hidden;
     opacity: 0;
+    max-width: 0;
+    margin-right: 0;
+    margin-right: 0;
+    transition: all 0.25s ease-in-out;
     pointer-events: none;
-    transition: all 0.2s ease;
+}
+
+.phase-nav:hover .phase-tooltip {
+    opacity: 1;
+    max-width: 200px;
 }
 
 .phase-dot:hover .phase-tooltip {
-    opacity: 1;
-    transform: translateY(-50%) translateX(-12px);
+    color: #fff;
+}
+
+.phase-nav:hover .phase-dot .dot-indicator {
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Light mode phase nav */
-body.light-mode-active .phase-nav-line {
-    background: linear-gradient(
-        to bottom,
-        rgba(102, 126, 234, 0.4) 0%,
-        rgba(118, 75, 162, 0.4) 100%
-    );
+body.light-mode-active .phase-nav:hover {
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 60px rgba(14, 165, 233, 0.2);
 }
 
-body.light-mode-active .phase-dot {
+body.light-mode-active .dot-indicator {
     background: rgba(0, 0, 0, 0.15);
     border-color: rgba(102, 126, 234, 0.4);
 }
 
-body.light-mode-active .phase-dot:hover {
+body.light-mode-active .phase-dot:hover .dot-indicator {
     background: rgba(102, 126, 234, 0.4);
     border-color: rgba(102, 126, 234, 0.6);
 }
 
-body.light-mode-active .phase-dot.active {
+body.light-mode-active .phase-dot.active .dot-indicator {
     background: var(--color-primary);
     border-color: var(--color-primary);
     box-shadow: 0 0 12px rgba(102, 126, 234, 0.5);
 }
 
-body.light-mode-active .phase-dot.visited {
+body.light-mode-active .phase-dot.visited .dot-indicator {
     background: rgba(102, 126, 234, 0.25);
     border-color: rgba(102, 126, 234, 0.4);
 }
 
 body.light-mode-active .phase-tooltip {
-    background: rgba(255, 255, 255, 0.9);
-    color: #1a1a1a;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+body.light-mode-active .phase-dot:hover .phase-tooltip {
+    color: var(--color-text);
+}
+
+body.light-mode-active .phase-nav:hover .phase-dot .dot-indicator {
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Scroll anchors for snap positioning */
+.scroll-anchor {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 /* Mobile: hide phase nav */
@@ -1072,10 +1107,12 @@ ul {
 
 .section-technology {
     padding-top: 30vh;
+    position: relative;
 }
 
 .section-government {
     padding-top: 30vh;
+    position: relative;
 }
 
 /* ============================================
@@ -1172,6 +1209,27 @@ ul {
    ============================================ */
 .vertical-section {
     padding: var(--spacing-4xl) 0;
+    position: relative;
+}
+
+/* ============================================
+   OBSERVATORY TRANSITION
+   ============================================ */
+.observatory-transition {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    margin-top: -1px;
+    z-index: 60;
+    pointer-events: none;
+}
+
+.observatory-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: bottom center;
+    display: block;
 }
 
 .vertical-section:last-child {
@@ -1644,10 +1702,27 @@ ul {
    FOOTER
    ============================================ */
 .footer {
-    padding: var(--spacing-3xl) 0;
+    padding: var(--spacing-2xl) 0 var(--spacing-xl) 0;
     background: var(--hero-bg);
     color: var(--hero-text-secondary);
     border-top: 1px solid var(--hero-border);
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-bg-logo {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 1200px;
+    opacity: 0.02;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.footer-bg-logo img {
+    width: 100%;
+    height: auto;
 }
 
 .footer-grid {
