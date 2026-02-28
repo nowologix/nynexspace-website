@@ -553,6 +553,9 @@ function initGlobe() {
     particleGeom.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
     resources.geometries.push(particleGeom);
 
+    // Fresnel toggle - set false to disable effect
+    const FRESNEL_ENABLED = true;
+
     // Custom shader material for distance-based fade
     const particleMat = new THREE.ShaderMaterial({
         uniforms: {
@@ -560,13 +563,17 @@ function initGlobe() {
             opacity: { value: 0.0 },
             globeRadius: { value: GLOBE_RADIUS },
             maxDistance: { value: GLOBE_RADIUS * 1.4 },  // Fade out beyond this radius
-            pointSize: { value: 15.0 }
+            pointSize: { value: 15.0 },
+            cameraPos: { value: new THREE.Vector3(0, 0, 0) }  // For Fresnel reflection
         },
         vertexShader: `
             uniform float pointSize;
             uniform float globeRadius;
             uniform float maxDistance;
+            uniform vec3 cameraPos;
             varying float vAlpha;
+            varying vec3 vViewDir;
+            varying vec3 vPosition;
             void main() {
                 vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
                 gl_Position = projectionMatrix * mvPosition;
@@ -578,6 +585,10 @@ function initGlobe() {
                 float fade = 1.0 - smoothstep(globeRadius * 1.1, maxDistance, dist);
                 vAlpha = fade;
 
+                // Pass position and view direction for Fresnel
+                vPosition = position;
+                vViewDir = normalize(cameraPos - position);
+
                 // Size attenuation - larger particles closer to camera
                 gl_PointSize = pointSize * (200.0 / -mvPosition.z);
             }
@@ -586,6 +597,8 @@ function initGlobe() {
             uniform vec3 color;
             uniform float opacity;
             varying float vAlpha;
+            varying vec3 vViewDir;
+            varying vec3 vPosition;
             void main() {
                 // Create circular point
                 vec2 center = gl_PointCoord - vec2(0.5);
@@ -594,7 +607,15 @@ function initGlobe() {
 
                 // Soft edge
                 float alpha = 1.0 - smoothstep(0.3, 0.5, dist);
-                gl_FragColor = vec4(color, opacity * alpha * vAlpha);
+
+                // Fresnel reflection: stronger at grazing angles
+                vec3 normal = normalize(vPosition);
+                float fresnel = pow(1.0 - max(dot(vViewDir, normal), 0.0), 3.0);
+
+                // Modulate color with Fresnel - brighter/more metallic at glancing angles
+                vec3 fresnelColor = color + vec3(0.3, 0.2, 0.0) * fresnel;
+
+                gl_FragColor = vec4(fresnelColor, opacity * alpha * vAlpha);
             }
         `,
         transparent: true,
@@ -613,6 +634,7 @@ function initGlobe() {
 
     // Expose storm effects control globally
     window.globeStormEffects = {
+        fresnelEnabled: FRESNEL_ENABLED,  // Toggle Fresnel effect on/off
         halos: stormHalos,
         particles: {
             system: particleSystem,
@@ -639,6 +661,11 @@ function initGlobe() {
         },
 
         update: function(time) {
+            // Update camera position for Fresnel effect
+            if (this.fresnelEnabled && window.camera) {
+                this.particles.material.uniforms.cameraPos.value.copy(window.camera.position);
+            }
+
             // Animate halo pulse
             stormHalos.forEach((halo, index) => {
                 if (halo.material.uniforms.opacity.value > 0) {
