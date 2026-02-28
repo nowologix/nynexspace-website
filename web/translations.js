@@ -87,7 +87,16 @@ const translations = {
 
         // Footer
         'footer.tagline': 'Strategic Intelligence from Orbit',
-        'footer.copyright': '&copy; 2025 NYNEX SPACE. All rights reserved.'
+        'footer.copyright': '&copy; 2025 NYNEX SPACE. All rights reserved.',
+
+        // Phase Navigation
+        'phase.hero': 'Home',
+        'phase.mission': 'Mission',
+        'phase.infrastructure': 'Infrastructure',
+        'phase.weather': 'Weather',
+        'phase.geostrategy': 'Geo-Strategy',
+        'phase.architecture': 'Architecture',
+        'phase.institutional': 'Institutional'
     },
 
     de: {
@@ -174,7 +183,16 @@ const translations = {
 
         // Footer
         'footer.tagline': 'Strategische Intelligenz aus dem Orbit',
-        'footer.copyright': '&copy; 2025 NYNEX SPACE. Alle Rechte vorbehalten.'
+        'footer.copyright': '&copy; 2025 NYNEX SPACE. Alle Rechte vorbehalten.',
+
+        // Phase Navigation
+        'phase.hero': 'Start',
+        'phase.mission': 'Mission',
+        'phase.infrastructure': 'Infrastruktur',
+        'phase.weather': 'Wetter',
+        'phase.geostrategy': 'Geo-Strategie',
+        'phase.architecture': 'Architektur',
+        'phase.institutional': 'Institution'
     }
 };
 

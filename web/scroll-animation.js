@@ -46,26 +46,33 @@ function initOrbitalAnimation() {
     const startRight = parseInt(window.getComputedStyle(heroVisual).right);
     console.log('Starting position:', startRight);
 
-    // Get ACTUAL globe dimensions for precise centering
+    // Get the CURRENT globe dimensions (with its current transform)
+    // This is what the original code used - the rendered size, not natural size
     const globeRect = globe.getBoundingClientRect();
     const globeWidth = globeRect.width;
-    const globeHeight = globeRect.height;
-    console.log('Globe dimensions:', globeWidth, 'x', globeHeight);
+    console.log('Current globe width (rendered):', globeWidth, 'px');
+
+    // Calculate the side offset - REFERENCE VALUES at 1920px viewport
+    // The offset should move the globe from center to beside the text content
+    const REFERENCE_VIEWPORT = 1920;
+    const INITIAL_SCALE = 0.8;  // Globe starts at scale 0.8 - define BEFORE getGlobeSideOffset
+
+    // Fixed offset values - different for LEFT and RIGHT positioning
+    // because text content is not symmetrically positioned
+    const REFERENCE_SIDE_OFFSET_RIGHT = 550;   // Phase 3: Globe to RIGHT of text
+    const REFERENCE_SIDE_OFFSET_LEFT = 120;    // Phase 4: Globe to LEFT of text
+
+    // Function to get side offset - FIXED pixels, NOT scaled by viewport
+    // The text has fixed width, so offset from center should also be fixed
+    const getGlobeSideOffset = (direction = 'right') => {
+        return direction === 'right' ? REFERENCE_SIDE_OFFSET_RIGHT : REFERENCE_SIDE_OFFSET_LEFT;
+    };
 
     // Animation configuration
     const startRightValue = startRight;
-    const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    // Calculate TRUE center position for globe
-    // Globe is positioned with right: 0 inside hero-visual
-    // To center globe on screen: heroVisual.right = (viewportWidth - globeWidth) / 2
-    // Derivation: globe center = viewportWidth - heroVisual.right - (globeWidth / 2)
-    //            For centering: viewportWidth - heroVisual.right - (globeWidth / 2) = viewportWidth / 2
-    //            Therefore: heroVisual.right = (viewportWidth - globeWidth) / 2
-    const centerRightValue = (viewportWidth - globeWidth) / 2;
-
-    console.log('Calculated centerRightValue:', centerRightValue, '(viewportWidth:', viewportWidth, ', globeWidth:', globeWidth, ')');
+    console.log('Globe positioning - Rendered Width:', globeWidth, 'px');
 
     // Calculate section positions (CACHE THESE to avoid getBoundingClientRect on every scroll!)
     const positioningSection = document.querySelector('.section-positioning');
@@ -108,8 +115,18 @@ function initOrbitalAnimation() {
         spaceWeatherImage.style.opacity = '1';
     }
 
-    console.log('Animation config - startRight:', startRightValue, 'centerRight:', centerRightValue, 'sectionTop:', sectionTop);
-    console.log('globeRightOffset (for Phase 3):', (centerRightValue - 200).toFixed(0), 'px');
+    console.log('Animation config - sectionTop:', sectionTop);
+    console.log('Globe positioning - Right offset:', REFERENCE_SIDE_OFFSET_RIGHT, 'px, Left offset:', REFERENCE_SIDE_OFFSET_LEFT, 'px');
+
+    // Function to get the CENTER position for hero-visual
+    // The globeWidth was measured at the initial scale (0.8)
+    // We need to adjust for the current scale relative to the initial scale
+    const getCenterRightValue = (currentScale = 1) => {
+        const viewportWidth = window.innerWidth;
+        // Calculate visual width based on current scale relative to initial scale
+        const visualGlobeWidth = globeWidth * (currentScale / INITIAL_SCALE);
+        return (viewportWidth - visualGlobeWidth) / 2;
+    };
 
     // Manual scroll handler with state tracking
     let ticking = false;
@@ -279,55 +296,62 @@ function initOrbitalAnimation() {
             return anchorPosition - centerOffset;
         }
 
-        // Update active phase dot based on scroll
-        // Use Intersection Observer for reliable detection
-        const setupIntersectionObserver = () => {
-            const anchors = [
-                { id: 2, selector: '#anchor-mission' },
-                { id: 3, selector: '#anchor-capabilities-01' },
-                { id: 4, selector: '#anchor-capabilities-02' },
-                { id: 5, selector: '#anchor-capabilities-03' },
-                { id: 6, selector: '#anchor-architecture' },
-                { id: 7, selector: '#anchor-institutional' }
+        // ============================================
+        // PHASE NAVIGATION UPDATE (on scroll)
+        // ============================================
+        const updatePhaseFromScroll = () => {
+            // Use window.scrollY directly since Lenis might not be ready
+            const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+            // Find current phase based on scroll position
+            let currentPhase = 1;
+
+            // Check each phase position
+            const phasePositions = [
+                { phase: 1, position: 0 },
+                { phase: 2, selector: '#anchor-mission' },
+                { phase: 3, selector: '#anchor-capabilities-01' },
+                { phase: 4, selector: '#anchor-capabilities-02' },
+                { phase: 5, selector: '#anchor-capabilities-03' },
+                { phase: 6, selector: '#anchor-architecture' },
+                { phase: 7, selector: '#anchor-institutional' }
             ];
 
-            // Track the LAST phase that was visible (sticky behavior)
-            let lastVisiblePhase = 1;
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const phaseId = parseInt(entry.target.dataset.phase);
-
-                    // When entering viewport, update lastVisiblePhase
-                    if (entry.isIntersecting && entry.boundingClientRect.top >= 0) {
-                        if (phaseId > lastVisiblePhase) {
-                            lastVisiblePhase = phaseId;
-                            console.log('Phase', phaseId, 'entered, lastVisiblePhase now:', lastVisiblePhase);
-                        }
+            // Get actual positions
+            for (let i = 0; i < phasePositions.length; i++) {
+                const p = phasePositions[i];
+                if (p.selector) {
+                    const el = document.querySelector(p.selector);
+                    if (el) {
+                        const rect = el.getBoundingClientRect();
+                        p.position = rect.top + scrollY;
                     }
-                });
-
-                console.log('Updating to phase:', lastVisiblePhase);
-                updateDotsFromPhase(lastVisiblePhase);
-            }, {
-                root: null,
-                rootMargin: '-40% 0px -50% 0px', // Trigger near top-middle of viewport
-                threshold: 0
-            });
-
-            // Observe all anchors
-            anchors.forEach(anchor => {
-                const el = document.querySelector(anchor.selector);
-                if (el) {
-                    el.dataset.phase = anchor.id;
-                    observer.observe(el);
                 }
-            });
+            }
 
-            return observer;
+            // Find which phase we're at (last phase we've passed or are at)
+            for (let i = 1; i < phasePositions.length; i++) {
+                // If scroll position is at or past this phase position, mark it as current
+                if (scrollY >= phasePositions[i].position - 300) {
+                    currentPhase = phasePositions[i].phase;
+                }
+            }
+
+            updateDotsFromPhase(currentPhase);
         };
 
-        const phaseObserver = setupIntersectionObserver();
+        // Throttled scroll update for phase navigation
+        let phaseScrollTimeout;
+        const phaseScrollHandler = () => {
+            clearTimeout(phaseScrollTimeout);
+            phaseScrollTimeout = setTimeout(updatePhaseFromScroll, 50);
+        };
+
+        // Use window scroll event directly (works with Lenis)
+        window.addEventListener('scroll', phaseScrollHandler, { passive: true });
+
+        // Initial call
+        setTimeout(updatePhaseFromScroll, 500);
 
         function updateDotsFromPhase(currentPhase) {
             phaseDots.forEach(dot => {
@@ -520,24 +544,6 @@ function initOrbitalAnimation() {
         // Phase 5: Globe moves back to right side (Food Security section)
         const phase5End = foodSecurityCenterScroll || (phase4End + viewportHeight + 500);
 
-        // Calculate translateX offset to move globe from center to right side
-        // When centered: globe center = viewport center
-        // When on right side: we want globe ~200px from viewport right edge
-        // Current: globe right edge = viewportWidth - centerRightValue
-        // Target: globe right edge = 200px from viewport right
-        // So globe needs to move RIGHT by: (viewportWidth - centerRightValue) - 200 - (globeWidth / 2)
-        // Wait, let me recalculate more carefully:
-        // Globe at center: its right edge is at viewportWidth - centerRightValue - (globeWidth/2) from left... no that's wrong
-        // Actually, when globe is centered: centerRightValue puts hero-visual's right edge such that globe is centered
-        // Globe's right edge from viewport left = viewportWidth - centerRightValue
-        // Globe's right edge from viewport right = centerRightValue
-        // But globe's width is 1080px, so globe center is at: viewportWidth - centerRightValue - 540 = 960px (centered) ✓
-
-        // Calculate translateX offset to move globe from center to right side
-        // Increase by 20% for better positioning under the satellite
-        const baseOffset = centerRightValue - 200;
-        const globeRightOffset = baseOffset * 1.20;  // 20% more movement to the right
-
         let currentRight, currentScale, currentBg, globeOpacity;
         let textOpacity = 0;
 
@@ -548,8 +554,12 @@ function initOrbitalAnimation() {
             currentPhase = '1';
             const p = scrollY / globeCenterEnd;
             const eased = easeInOutQuad(Math.max(0, Math.min(p, 1)));
-            currentRight = startRightValue + (centerRightValue - startRightValue) * eased;
+
+            // Calculate scale FIRST, then use it for centering
             currentScale = 1 - (0.2 * eased);
+            const centerRight = getCenterRightValue(currentScale);
+            currentRight = startRightValue + (centerRight - startRightValue) * eased;
+
             currentBg = 'transparent';
             globeOpacity = 1;
             textOpacity = 0;
@@ -562,8 +572,11 @@ function initOrbitalAnimation() {
         else if (scrollY < zoneEnd) {
             currentPhase = '2';
             const subPhase = scrollY < fadeInEnd ? 'fade-in' : 'slow-mo';
-            currentRight = centerRightValue;
+
+            // Scale is constant in Phase 2
             currentScale = 0.8;
+            currentRight = getCenterRightValue(currentScale);
+
             currentBg = 'transparent';
             globeOpacity = 1;
             globeX = 0;
@@ -580,14 +593,17 @@ function initOrbitalAnimation() {
             const p = (scrollY - phase2End) / (phase3End - phase2End);
             const eased = easeInOutQuad(Math.max(0, Math.min(p, 1)));
 
-            // Keep heroVisual.right constant, use translateX to move globe
-            currentRight = centerRightValue;
+            // Debug logging (log once at 50%)
+            if (p > 0.48 && p < 0.52) {
+                console.log(`Phase 3 midpoint: p=${p.toFixed(2)}, eased=${eased.toFixed(2)}, globeX=${(getGlobeSideOffset('right') * eased).toFixed(0)}px, phase2End=${phase2End}, phase3End=${phase3End}, scrollY=${scrollY.toFixed(0)}`);
+            }
+
+            // Calculate scale FIRST
+            currentScale = 0.8 - (0.35 * eased);
+            currentRight = getCenterRightValue(currentScale);
 
             // Move globe to right using translateX
-            globeX = globeRightOffset * eased;  // 0 → 220px (moves right)
-
-            // Scale down from 80% to 45%
-            currentScale = 0.8 - (0.35 * eased);
+            globeX = getGlobeSideOffset('right') * eased;  // 0 → offset (right)
 
             // Background stays black
             currentBg = 'transparent';
@@ -624,15 +640,15 @@ function initOrbitalAnimation() {
             const p = (scrollY - phase3End) / (phase4End - phase3End);
             const eased = easeInOutQuad(Math.max(0, Math.min(p, 1)));
 
-            // Keep heroVisual.right constant, use translateX to move globe
-            currentRight = centerRightValue;
-
-            // Move globe from RIGHT side to LEFT side
-            // Start: globeRightOffset (right side) → End: -globeRightOffset (left side)
-            globeX = globeRightOffset * (1 - eased * 2);  // Right offset → 0 → -Right offset (left)
-
-            // Keep scale at 45%
+            // Scale is constant at 45%
             currentScale = 0.45;
+            currentRight = getCenterRightValue(currentScale);
+
+            // Move globe from RIGHT side to LEFT side (different offsets for each side)
+            const rightOffset = getGlobeSideOffset('right');
+            const leftOffset = getGlobeSideOffset('left');
+            // Interpolate from +rightOffset to -leftOffset
+            globeX = rightOffset - (rightOffset + leftOffset) * eased;  // Right → 0 → Left
 
             // Background stays black
             currentBg = 'transparent';
@@ -670,15 +686,15 @@ function initOrbitalAnimation() {
             const p = (scrollY - phase4End) / (phase5End - phase4End);
             const eased = easeInOutQuad(Math.max(0, Math.min(p, 1)));
 
-            // Keep heroVisual.right constant, use translateX to move globe
-            currentRight = centerRightValue;
-
-            // Move globe from LEFT side to RIGHT side (like Phase 3 position)
-            // Start: -globeRightOffset (left side) → End: +globeRightOffset (right side)
-            globeX = -globeRightOffset + (globeRightOffset * 2 * eased);  // Left → Right
-
-            // Keep scale at 45%
+            // Scale is constant at 45%
             currentScale = 0.45;
+            currentRight = getCenterRightValue(currentScale);
+
+            // Move globe from LEFT side to RIGHT side (different offsets for each side)
+            const leftOffset = getGlobeSideOffset('left');
+            const rightOffset = getGlobeSideOffset('right');
+            // Interpolate from -leftOffset to +rightOffset
+            globeX = -leftOffset + (leftOffset + rightOffset) * eased;  // Left → Right
 
             // Background stays black
             currentBg = 'transparent';
@@ -719,11 +735,11 @@ function initOrbitalAnimation() {
         // ============================================================
         else {
             currentPhase = '6';
-            currentRight = centerRightValue;
             currentScale = 0.45;
+            currentRight = getCenterRightValue(currentScale);
             currentBg = 'transparent';
             globeOpacity = 1;
-            globeX = globeRightOffset;  // Keep globe on RIGHT side
+            globeX = getGlobeSideOffset('right');  // Keep globe on RIGHT side
             globeY = viewportHeight * 0.02;
             textOpacity = 0;
 
