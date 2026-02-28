@@ -82,9 +82,8 @@ function initOrbitalAnimation() {
     const infrastructureSection = document.querySelector('#vertical-infrastructure');
     const infrastructureImage = infrastructureSection ? infrastructureSection.querySelector('.visual-infrastructure') : null;
 
-    // Space Weather section (Phase 4)
+    // Space Weather section (Phase 4) - no image, uses globe instead
     const spaceWeatherSection = document.querySelector('#vertical-spaceweather');
-    const spaceWeatherImage = spaceWeatherSection ? spaceWeatherSection.querySelector('.visual-weather') : null;
 
     // Food Security section (Phase 5)
     const foodSecuritySection = document.querySelector('#vertical-foodsecurity');
@@ -108,11 +107,6 @@ function initOrbitalAnimation() {
     // Set satellite image to initially VISIBLE (only hide in Phase 4)
     if (infrastructureImage) {
         infrastructureImage.style.opacity = '1';
-    }
-
-    // Also set space weather image visible by default
-    if (spaceWeatherImage) {
-        spaceWeatherImage.style.opacity = '1';
     }
 
     console.log('Animation config - sectionTop:', sectionTop);
@@ -563,8 +557,16 @@ function initOrbitalAnimation() {
             currentBg = 'transparent';
             globeOpacity = 1;
             textOpacity = 0;
-            globeX = 0;
+
+            // For ultra-wide screens: shift globe left, ease back to center during Phase 1
+            const ultraWideCompensation = Math.max(0, (window.innerWidth - 1920) / 10);
+            globeX = -ultraWideCompensation * (1 - eased);  // Start at compensation, ease to 0
             globeY = 0;
+
+            // Hide hotspots in Phase 1
+            if (window.globeHotspots) {
+                window.globeHotspots.setIntensity(0);
+            }
         }
         // ============================================================
         // PHASE 2: Sovereign Mission with slow-mo
@@ -584,6 +586,11 @@ function initOrbitalAnimation() {
             textOpacity = subPhase === 'fade-in'
                 ? Math.max(0, Math.min(1, (scrollY - globeCenterEnd) / (fadeInEnd - globeCenterEnd)))
                 : 1;
+
+            // Hide hotspots in Phase 2
+            if (window.globeHotspots) {
+                window.globeHotspots.setIntensity(0);
+            }
         }
         // ============================================================
         // PHASE 3: Globe moves to right side and gets smaller (Infrastructure)
@@ -618,6 +625,14 @@ function initOrbitalAnimation() {
             // Reset storm effects (halos + particles) in Phase 3
             if (window.globeStormEffects) {
                 window.globeStormEffects.setIntensity(0);
+            }
+
+            // Show critical infrastructure hotspots in Phase 3
+            // Peak at phase3End (when "Kritische Infrastruktur..." is centered)
+            // Similar to Phase 4 particles approach
+            const hotspotIntensity = eased;  // 0 at start, 1 at end (phase3End = centered)
+            if (window.globeHotspots) {
+                window.globeHotspots.setIntensity(hotspotIntensity);
             }
 
             // Satellite image: scale based on position (peak earlier in scroll)
@@ -657,24 +672,33 @@ function initOrbitalAnimation() {
             globeY = viewportHeight * 0.02;
             textOpacity = 0;
 
-            // Solar storm atmosphere effect - intensify through Phase 4
+            // Fade out hotspots in Phase 4 (were at peak at end of Phase 3)
+            const hotspotFadeOut = 1 - Math.min(eased * 3, 1);  // Fade out over first 33% of Phase 4
+            if (window.globeHotspots) {
+                window.globeHotspots.setIntensity(hotspotFadeOut);
+            }
+
+            // Storm intensity: fade in through Phase 4, PEAK at phase4End (p=1)
+            const stormEased = eased;  // 0 at start, 1 at end (when "02" is centered)
+
+            // Solar storm atmosphere effect
             if (window.globeAtmosphere) {
-                window.globeAtmosphere.setSolarStormMode(true, eased);
+                window.globeAtmosphere.setSolarStormMode(true, stormEased);
             }
 
-            // Storm effects (halos + particles) - intensify through Phase 4
+            // Storm effects (halos + particles)
             if (window.globeStormEffects) {
-                window.globeStormEffects.setIntensity(eased);
-            }
-
-            // Hide the space weather image (but keep the satellite visible)
-            if (spaceWeatherImage) {
-                spaceWeatherImage.style.opacity = '0';
+                window.globeStormEffects.setIntensity(stormEased);
             }
 
             // Reset orbital tubes in Phase 4
             if (window.globeOrbitalTubes) {
                 window.globeOrbitalTubes.reset();
+            }
+
+            // Reset connection lines in Phase 4
+            if (window.globeConnections) {
+                window.globeConnections.reset();
             }
         }
         // ============================================================
@@ -703,16 +727,18 @@ function initOrbitalAnimation() {
             globeY = viewportHeight * 0.02;
             textOpacity = 0;
 
-            // Smoothly fade out solar storm at the start of Phase 5
+            // Storm intensity: fade out from peak (was 1 at end of Phase 4)
+            const stormFadeOut = 1 - Math.min(eased * 2, 1);  // Fade out over first 50% of Phase 5
+            if (window.globeStormEffects) {
+                window.globeStormEffects.setIntensity(stormFadeOut);
+            }
             if (window.globeAtmosphere) {
-                const stormFadeOut = Math.max(0, 1 - (p * 3));  // Fade out over first 33% of Phase 5
                 window.globeAtmosphere.setSolarStormMode(true, stormFadeOut);
             }
 
-            // Fade out storm effects (halos + particles)
-            if (window.globeStormEffects) {
-                const stormFadeOut = Math.max(0, 1 - (p * 3));
-                window.globeStormEffects.setIntensity(stormFadeOut);
+            // Hide hotspots in Phase 5
+            if (window.globeHotspots) {
+                window.globeHotspots.setIntensity(0);
             }
 
             // Hide satellite image in Phase 5 to showcase globe with orbital tubes
@@ -728,6 +754,11 @@ function initOrbitalAnimation() {
             // Animate orbital tubes - they grow progressively during Phase 5
             if (window.globeOrbitalTubes) {
                 window.globeOrbitalTubes.setProgress(eased);
+            }
+
+            // Animate continent connection lines - grow progressively with tubes
+            if (window.globeConnections) {
+                window.globeConnections.setProgress(eased);
             }
         }
         // ============================================================
@@ -766,6 +797,11 @@ function initOrbitalAnimation() {
             // Keep orbital tubes fully visible after Phase 5
             if (window.globeOrbitalTubes) {
                 window.globeOrbitalTubes.setProgress(1);
+            }
+
+            // Keep connection lines fully visible after Phase 5
+            if (window.globeConnections) {
+                window.globeConnections.setProgress(1);
             }
 
             // Fade out globe as we scroll past Phase 5

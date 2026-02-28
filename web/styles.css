@@ -1909,7 +1909,6 @@ ul {
 
     /* Hide satellite images on mobile */
     .visual-infrastructure,
-    .visual-weather,
     .visual-agriculture {
         display: none !important;
     }

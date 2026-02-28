@@ -252,6 +252,12 @@ function initGlobe() {
     scene.add(light_amb, light_spot_1, light_spot_2);
     resources.lights.push(light_amb, light_spot_1, light_spot_2, light_dir);
 
+    // PointLight for particle specular highlights (creates glitter sparkle effect)
+    const particleLight = new THREE.PointLight(0xffffff, 4, 1000, 2);
+    particleLight.position.set(0, 400, 0);
+    scene.add(particleLight);
+    resources.lights.push(particleLight);
+
     // Controls
     const controls = new OrbitControls(camera, globe_el);
     controls.rotateSpeed = 0.05;
@@ -271,6 +277,11 @@ function initGlobe() {
         // Update storm effects (halos pulse, particles flow)
         if (window.globeStormEffects) {
             window.globeStormEffects.update(time);
+        }
+
+        // Update hotspots (pulsating)
+        if (window.globeHotspots) {
+            window.globeHotspots.update(time);
         }
 
         renderer.render(scene, camera);
@@ -456,11 +467,12 @@ function initGlobe() {
             const clampedProgress = Math.max(0, Math.min(1, progress));
 
             // Each tube starts growing at a different time
+            // Adjust timing so ALL tubes are fully visible by end of Phase 5
             orbitalTubes.forEach((tube, index) => {
-                const tubeStart = index / TUBE_COUNT;  // Stagger start times
-                const tubeEnd = tubeStart + 0.4;  // Each tube takes 40% of phase to grow
+                const tubeStart = (index / TUBE_COUNT) * 0.5;  // Stagger: 0 to 0.5
+                const tubeGrowth = 0.5;  // Each tube takes 50% of phase to grow
 
-                let tubeProgress = (clampedProgress - tubeStart) / 0.4;
+                let tubeProgress = (clampedProgress - tubeStart) / tubeGrowth;
                 tubeProgress = Math.max(0, Math.min(1, tubeProgress));
 
                 // Progressive drawing using setDrawRange
@@ -482,6 +494,83 @@ function initGlobe() {
     };
 
     console.log('Orbital tubes initialized');
+
+    // ============================================
+    // CONTINENT CONNECTION LINES (Phase 5) - Red dashed lines
+    // ============================================
+    const continentConnections = [
+        { from: [40.7, -74.0], to: [51.5, -0.1] },    // NY to London
+        { from: [51.5, -0.1], to: [52.5, 13.4] },     // London to Berlin
+        { from: [52.5, 13.4], to: [35.7, 139.7] },    // Berlin to Tokyo
+        { from: [35.7, 139.7], to: [1.3, 103.8] },     // Tokyo to Singapore
+        { from: [1.3, 103.8], to: [-33.9, 151.2] },   // Singapore to Sydney
+        { from: [-33.9, 151.2], to: [28.6, 77.2] },    // Sydney to Delhi
+        { from: [28.6, 77.2], to: [30.0, 31.2] },      // Delhi to Cairo
+        { from: [30.0, 31.2], to: [-23.5, -46.6] },   // Cairo to São Paulo
+        { from: [-23.5, -46.6], to: [40.7, -74.0] },   // São Paulo to NY
+    ];
+
+    const connectionLines = [];
+    const connectionMaterial = new THREE.LineDashedMaterial({
+        color: 0xFF4444,  // Red
+        linewidth: 1,
+        scale: 1,
+        dashSize: 1,
+        gapSize: 0.5,
+        transparent: true,
+        opacity: 0.0
+    });
+    resources.materials.push(connectionMaterial);
+
+    continentConnections.forEach((conn) => {
+        const fromPos = calc_pos(conn.from[0], conn.from[1], GLOBE_RADIUS);
+        const toPos = calc_pos(conn.to[0], conn.to[1], GLOBE_RADIUS);
+
+        // Create arc curve above globe surface
+        const midPoint = fromPos.clone().add(toPos).multiplyScalar(0.5).normalize().multiplyScalar(GLOBE_RADIUS * 1.3);
+        const curve = new THREE.QuadraticBezierCurve3(fromPos, midPoint, toPos);
+        const points = curve.getPoints(50);
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+        const line = new THREE.Line(geometry, connectionMaterial.clone());
+        line.computeLineDistances();  // Required for dashed lines
+        line.renderOrder = 6;
+        parentContainer.add(line);
+        resources.meshes.push(line);
+
+        connectionLines.push({
+            line: line,
+            geometry: geometry,
+            maxPoints: 51  // 50 points + 1
+        });
+    });
+
+    // Expose connection lines control globally
+    window.globeConnections = {
+        lines: connectionLines,
+
+        setProgress: function(progress) {
+            const clampedProgress = Math.max(0, Math.min(1, progress));
+            const drawCount = Math.floor(connectionLines[0].maxPoints * clampedProgress);
+
+            connectionLines.forEach((conn, index) => {
+                // Progressive drawing
+                conn.geometry.setDrawRange(0, drawCount);
+
+                // Fade in opacity
+                conn.line.material.opacity = clampedProgress * 0.7;
+            });
+        },
+
+        reset: function() {
+            connectionLines.forEach(conn => {
+                conn.geometry.setDrawRange(0, 0);
+                conn.line.material.opacity = 0;
+            });
+        }
+    };
+
+    console.log('Continent connections initialized');
 
     // ============================================
     // MULTIPLE HALO LAYERS & SOLAR WIND (Phase 4)
@@ -529,98 +618,98 @@ function initGlobe() {
         });
     });
 
-    // Solar wind particles
-    const particleCount = 500;
-    const particleGeom = new THREE.BufferGeometry();
-    const particlePositions = new Float32Array(particleCount * 3);
-    const particleSpeeds = new Float32Array(particleCount);
-    const particleOffsets = new Float32Array(particleCount);
+    // ============================================
+    // SOLAR WIND PARTICLES - Glitter Effect
+    // Using InstancedMesh with PlaneGeometry for 3D tumbling particles
+    // ============================================
+    const maxParticleCount = 3000;  // Maximum for scroll animation (0 -> 3000 -> 0)
+    let visibleParticleCount = 0;   // Current visible count (controlled by scroll)
+    const instanceData = [];  // Store per-instance animation data
 
-    for (let i = 0; i < particleCount; i++) {
-        // Distribute particles in a spherical shell
-        const radius = GLOBE_RADIUS * (1.2 + Math.random() * 0.8);
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.random() * Math.PI;
-
-        particlePositions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
-        particlePositions[i * 3 + 1] = radius * Math.cos(phi);
-        particlePositions[i * 3 + 2] = radius * Math.sin(phi) * Math.sin(theta);
-
-        particleSpeeds[i] = 0.5 + Math.random() * 1.5;  // Flow speed
-        particleOffsets[i] = Math.random() * Math.PI * 2;  // Random start phase
-    }
-
-    particleGeom.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+    // Plane geometry for each particle (larger = more glittery, like CodePen's 4x4)
+    const particleGeom = new THREE.PlaneGeometry(0.4, 0.4);
     resources.geometries.push(particleGeom);
 
-    // Custom shader material for distance-based fade
-    const particleMat = new THREE.ShaderMaterial({
-        uniforms: {
-            color: { value: new THREE.Color(0xFFAA00) },
-            opacity: { value: 0.0 },
-            globeRadius: { value: GLOBE_RADIUS },
-            maxDistance: { value: GLOBE_RADIUS * 1.4 },  // Fade out beyond this radius
-            pointSize: { value: 15.0 }
-        },
-        vertexShader: `
-            uniform float pointSize;
-            uniform float globeRadius;
-            uniform float maxDistance;
-            varying float vAlpha;
-            void main() {
-                vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                gl_Position = projectionMatrix * mvPosition;
-
-                // Calculate distance from globe center
-                float dist = length(position);
-
-                // Fade based on distance from globe surface
-                float fade = 1.0 - smoothstep(globeRadius * 1.1, maxDistance, dist);
-                vAlpha = fade;
-
-                // Size attenuation - larger particles closer to camera
-                gl_PointSize = pointSize * (200.0 / -mvPosition.z);
-            }
-        `,
-        fragmentShader: `
-            uniform vec3 color;
-            uniform float opacity;
-            varying float vAlpha;
-            void main() {
-                // Create circular point
-                vec2 center = gl_PointCoord - vec2(0.5);
-                float dist = length(center);
-                if (dist > 0.5) discard;
-
-                // Soft edge
-                float alpha = 1.0 - smoothstep(0.3, 0.5, dist);
-                gl_FragColor = vec4(color, opacity * alpha * vAlpha);
-            }
-        `,
+    // Phong material with flat shading and specular for glitter effect
+    // Matching CodePen: specular red, shininess 50, vertex colors
+    const particleMat = new THREE.MeshPhongMaterial({
+        color: 0xFFAA00,
+        flatShading: true,           // Key: flat faces catch light sharply
+        specular: 0xff0000,          // RED specular (CodePen)
+        shininess: 50,               // Higher = more focused sparkle (CodePen)
+        side: THREE.DoubleSide,
         transparent: true,
-        blending: THREE.AdditiveBlending,
+        opacity: 0.0,
         depthWrite: false
     });
     resources.materials.push(particleMat);
 
-    const particleSystem = new THREE.Points(particleGeom, particleMat);
-    particleSystem.renderOrder = 4;
-    parentContainer.add(particleSystem);
-    resources.meshes.push(particleSystem);
+    // Create instanced mesh (single draw call for all particles)
+    const particleMesh = new THREE.InstancedMesh(particleGeom, particleMat, maxParticleCount);
+    particleMesh.renderOrder = 4;
+    particleMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);  // Will update every frame
+    particleMesh.frustumCulled = false;  // Prevent clipping at edges (bbox doesn't update with animation)
+    particleMesh.count = 0;  // Initially hide all particles
 
-    // Store original positions for animation
-    const originalPositions = particlePositions.slice();
+    parentContainer.add(particleMesh);
+    resources.meshes.push(particleMesh);
+
+    // Initialize particle data
+    const matrix = new THREE.Matrix4();
+    const position = new THREE.Vector3();
+    const quaternion = new THREE.Quaternion();
+    const scale = new THREE.Vector3(1, 1, 1);
+
+    for (let i = 0; i < maxParticleCount; i++) {
+        // Weather streams: fewer, thicker streams
+        const streamIndex = i % 5;  // 5 thick streams (was 8)
+        const basePhi = 0.2 + (streamIndex / 5) * 0.6 * Math.PI;  // Latitude bands (avoid poles)
+        const theta = Math.random() * Math.PI * 2;    // Random starting position along stream
+        const radius = GLOBE_RADIUS * (0.94 + Math.random() * 0.15);  // Tighter radius spread
+
+        const originalPos = new THREE.Vector3(
+            radius * Math.sin(basePhi) * Math.cos(theta),
+            radius * Math.cos(basePhi),
+            radius * Math.sin(basePhi) * Math.sin(theta)
+        );
+
+        // Random rotation axis for tumbling
+        const axis = new THREE.Vector3(
+            Math.random() - 0.5,
+            Math.random() - 0.5,
+            Math.random() - 0.5
+        ).normalize();
+
+        const rotationSpeed = 0.3 + Math.random() * 1;  // Slower tumbling
+        const offset = Math.random() * Math.PI * 2;
+
+        // Store instance data for weather stream animation
+        instanceData.push({
+            originalPos: originalPos,
+            originalTheta: theta,  // Store for orbit animation
+            basePhi: basePhi,       // Store latitude for this stream
+            streamIndex: streamIndex,
+            axis: axis,
+            rotationSpeed: rotationSpeed,
+            offset: offset
+        });
+
+        // Set initial matrix
+        quaternion.setFromAxisAngle(axis, offset);
+        matrix.compose(originalPos, quaternion, scale);
+        particleMesh.setMatrixAt(i, matrix);
+    }
+    particleMesh.instanceMatrix.needsUpdate = true;
 
     // Expose storm effects control globally
     window.globeStormEffects = {
         halos: stormHalos,
         particles: {
-            system: particleSystem,
-            positions: particlePositions,
-            speeds: particleSpeeds,
-            offsets: particleOffsets,
-            original: originalPositions,
+            mesh: particleMesh,
+            data: instanceData,
             material: particleMat,
+            maxCount: maxParticleCount,
+            visibleCount: 0,
             visible: false
         },
 
@@ -633,9 +722,13 @@ function initGlobe() {
                 halo.material.uniforms.opacity.value = targetOpacity;
             });
 
-            // Animate particles
+            // Animate particles - both opacity AND count
             this.particles.visible = intensity > 0;
-            this.particles.material.uniforms.opacity.value = intensity * 0.6;
+            this.particles.material.opacity = intensity * 0.8;
+
+            // Scale particle count with intensity (0 -> 3000 -> 0)
+            this.particles.visibleCount = Math.floor(intensity * maxParticleCount);
+            this.particles.mesh.count = this.particles.visibleCount;  // For InstancedMesh
         },
 
         update: function(time) {
@@ -647,37 +740,196 @@ function initGlobe() {
                 }
             });
 
-            // Animate solar wind particles
+            // Animate glitter particles (weather wind streams - slow, long waves)
             if (this.particles.visible && this.particles.material.opacity > 0) {
-                const positions = this.particles.positions;
-                const original = this.particles.original;
-                const speeds = this.particles.speeds;
-                const offsets = this.particles.offsets;
+                const data = this.particles.data;
+                const mesh = this.particles.mesh;
+                const count = this.particles.visibleCount;
 
-                for (let i = 0; i < positions.length; i += 3) {
-                    const idx = i / 3;
-                    const t = time * 0.001 * speeds[idx] + offsets[idx];
+                const matrix = new THREE.Matrix4();
+                const position = new THREE.Vector3();
+                const quaternion = new THREE.Quaternion();
+                const scale = new THREE.Vector3(1, 1, 1);
 
-                    // Flow around the globe in a spiral
-                    const radius = Math.sqrt(original[i] ** 2 + original[i + 1] ** 2 + original[i + 2] ** 2);
-                    const baseTheta = Math.atan2(original[i + 2], original[i]);
-                    const phi = Math.acos(original[i + 1] / radius);
+                for (let i = 0; i < count; i++) {
+                    const d = data[i];
+                    const t = time * 0.001;
 
-                    // Add spiral motion
-                    const theta = baseTheta + t * 0.5;
-                    const spiralRadius = radius + Math.sin(t * 2 + idx) * 2;
+                    // Slower flow - weather doesn't rush
+                    const flowSpeed = 0.15 + (d.streamIndex % 2) * 0.05;
+                    const theta = d.originalTheta + t * flowSpeed;
 
-                    positions[i] = spiralRadius * Math.sin(phi) * Math.cos(theta);
-                    positions[i + 1] = spiralRadius * Math.cos(phi) + Math.sin(t + idx) * 3;
-                    positions[i + 2] = spiralRadius * Math.sin(phi) * Math.sin(theta);
+                    // Long, gentle oscillations - not hectic
+                    // Fewer waves around the globe, slower undulation
+                    const meanderAmount = 0.25;
+                    const meanderFreq = 1.0 + d.streamIndex * 0.3;  // Longer waves
+                    const timeShift = t * 0.3;  // Slow wave movement
+                    const phi = d.basePhi + Math.sin(theta * meanderFreq + timeShift) * meanderAmount;
+
+                    // Constant radius
+                    const radius = d.originalPos.length();
+
+                    position.set(
+                        radius * Math.sin(phi) * Math.cos(theta),
+                        radius * Math.cos(phi),
+                        radius * Math.sin(phi) * Math.sin(theta)
+                    );
+
+                    // Gentle tumbling
+                    const rotationAngle = t * d.rotationSpeed + d.offset;
+                    quaternion.setFromAxisAngle(d.axis, rotationAngle);
+
+                    // Update instance matrix
+                    matrix.compose(position, quaternion, scale);
+                    mesh.setMatrixAt(i, matrix);
                 }
-
-                this.particles.system.geometry.attributes.position.needsUpdate = true;
+                mesh.instanceMatrix.needsUpdate = true;
             }
         }
     };
 
     console.log('Storm effects initialized (halos + particles)');
+
+    // ============================================
+    // CRITICAL INFRASTRUCTURE HOTSPOTS (Phase 3)
+    // Protective shields with expanding pulsing rings
+    // ============================================
+    const hotspotLocations = [
+        { lat: 40.7, lng: -74.0, name: 'New York' },    // USA East
+        { lat: 34.1, lng: -118.2, name: 'Los Angeles' }, // USA West
+        { lat: 51.5, lng: -0.1, name: 'London' },        // UK
+        { lat: 52.5, lng: 13.4, name: 'Berlin' },        // Germany
+        { lat: 48.9, lng: 2.3, name: 'Paris' },          // France
+        { lat: 35.7, lng: 139.7, name: 'Tokyo' },        // Japan
+        { lat: 1.3, lng: 103.8, name: 'Singapore' },     // Singapore
+        { lat: -33.9, lng: 151.2, name: 'Sydney' },      // Australia
+        { lat: 55.8, lng: 37.6, name: 'Moscow' },        // Russia
+        { lat: -23.5, lng: -46.6, name: 'São Paulo' },   // Brazil
+        { lat: 28.6, lng: 77.2, name: 'New Delhi' },     // India
+        { lat: 30.0, lng: 31.2, name: 'Cairo' },         // Egypt
+    ];
+
+    const hotspots = [];
+    const shieldGroups = [];
+    const ringsPerHotspot = 4;  // Multiple expanding rings per hotspot
+
+    // Central sphere for each hotspot
+    const centerGeom = new THREE.SphereGeometry(1.2, 16, 16);
+    resources.geometries.push(centerGeom);
+
+    const centerMat = new THREE.MeshBasicMaterial({
+        color: 0x5B9BD5,  // Bright blue
+        transparent: true,
+        opacity: 0.0
+    });
+    resources.materials.push(centerMat);
+
+    // Expanding ring geometry (thin lines, not filled)
+    function createRingGeometry(radius, segments = 32) {
+        const points = [];
+        for (let i = 0; i <= segments; i++) {
+            const angle = (i / segments) * Math.PI * 2;
+            points.push(new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, 0));
+        }
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+        return geometry;
+    }
+
+    const ringGeom = createRingGeometry(1);  // Base unit circle, will scale
+    resources.geometries.push(ringGeom);
+
+    const ringMat = new THREE.LineBasicMaterial({
+        color: 0x5B9BD5,  // Bright blue
+        transparent: true,
+        opacity: 0.0
+    });
+    resources.materials.push(ringMat);
+
+    hotspotLocations.forEach((loc) => {
+        const pos = calc_pos(loc.lat, loc.lng, GLOBE_RADIUS);
+        const normal = pos.clone().normalize();
+
+        // Create group for this hotspot
+        const group = new THREE.Group();
+        group.position.set(pos.x, pos.y, pos.z);
+
+        // Center sphere
+        const center = new THREE.Mesh(centerGeom, centerMat.clone());
+        group.add(center);
+
+        // Multiple expanding rings
+        const rings = [];
+        for (let i = 0; i < ringsPerHotspot; i++) {
+            const ring = new THREE.LineLoop(ringGeom.clone(), ringMat.clone());
+            ring.lookAt(pos.clone().multiplyScalar(2));
+            group.add(ring);
+            rings.push(ring);
+        }
+
+        group.renderOrder = 5;
+        parentContainer.add(group);
+        resources.meshes.push(group);
+
+        shieldGroups.push({
+            group: group,
+            center: center,
+            rings: rings,
+            normal: normal,
+            offset: Math.random() * Math.PI * 2
+        });
+    });
+
+    // Expose hotspots control globally
+    window.globeHotspots = {
+        shields: shieldGroups,
+        baseIntensity: 0,  // Store base intensity from setIntensity
+
+        setIntensity: function(intensity) {
+            // intensity: 0 (none) to 1 (full visible)
+            this.baseIntensity = intensity;
+            shieldGroups.forEach((s) => {
+                s.center.material.opacity = intensity * 0.8;
+            });
+            this.visible = intensity > 0;
+            this.updateMaterial();  // Update ring materials
+        },
+
+        updateMaterial: function() {
+            // Called when intensity changes to update ring materials
+            shieldGroups.forEach((s) => {
+                s.rings.forEach(ring => {
+                    ring.material.opacity = this.baseIntensity * 0.6;
+                });
+            });
+        },
+
+        update: function(time) {
+            if (!this.visible) return;
+
+            const t = time * 0.001;  // Animation speed
+            const maxRadius = 7;
+            const ringSpeed = 0.5;
+
+            shieldGroups.forEach((s) => {
+                s.rings.forEach((ring, i) => {
+                    // Each ring has a phase offset for continuous wave effect
+                    const phaseOffset = (i / ringsPerHotspot) * (Math.PI * 2);
+                    const pulse = ((t * ringSpeed + phaseOffset + s.offset) % (Math.PI * 2));
+                    const progress = pulse / (Math.PI * 2);  // 0 to 1
+
+                    // Expand ring from center outward
+                    const currentRadius = 1.5 + progress * (maxRadius - 1.5);
+                    ring.scale.set(currentRadius, currentRadius, 1);
+
+                    // Fade out based on progress (not compounding!)
+                    const fadeOut = 1 - progress * 0.7;
+                    ring.material.opacity = this.baseIntensity * 0.6 * fadeOut;
+                });
+            });
+        }
+    };
+
+    console.log('Hotspots initialized (protective shields with expanding rings)');
 
     console.log('Globe initialized successfully');
 
