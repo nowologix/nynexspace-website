@@ -135,13 +135,14 @@ section {
 
 .nav.scrolled .nav-container {
     background: rgba(0, 0, 0, 0.75);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-lg);
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     padding: 12px 24px;
     isolation: isolate;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 /* Scrolled state (dark mode) - Login button keeps white border */
@@ -221,6 +222,7 @@ section {
     justify-content: space-between;
     pointer-events: auto;
     transition: all 0.3s ease;
+    border: 1px solid transparent;  /* Always have border to prevent layout shift */
 }
 
 .nav-logo {
